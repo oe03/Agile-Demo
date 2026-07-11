@@ -1,0 +1,33 @@
+<!-- src/OeKhyeJin/job-management/signup.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Sign Up - Job Portal</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="auth-container">
+      <h1>Sign Up</h1>
+      <form id="signupForm">
+        <label for="email">Email</label>
+        <input type="email" id="email" required />
+
+        <label for="password">Password</label>
+        <input type="password" id="password" required minlength="6" />
+
+        <label for="role">I am a...</label>
+        <select id="role" required>
+          <option value="jobseeker">Job Seeker</option>
+          <option value="employer">Employer</option>
+        </select>
+
+        <button type="submit">Sign Up</button>
+        <p id="errorMsg" class="error"></p>
+      </form>
+      <p>Already have an account? <a href="login.html">Log in</a></p>
+    </div>
+
+    <script type="module" src="js/signup.js"></script>
+  </body>
+</html>

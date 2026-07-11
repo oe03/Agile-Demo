@@ -1,0 +1,36 @@
+/* src/OeKhyeJin/job-management/css/style.css */
+body {
+    font-family: Arial, sans-serif;
+    max-width: 400px;
+    margin: 50px auto;
+  }
+  
+  .auth-container {
+    border: 1px solid #ddd;
+    padding: 30px;
+    border-radius: 8px;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  input, select {
+    padding: 8px;
+  }
+  
+  button {
+    padding: 10px;
+    background: #4285f4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .error {
+    color: red;
+    font-size: 14px;
+  }
