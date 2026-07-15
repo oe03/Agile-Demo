@@ -1,4 +1,3 @@
-// src/OeKhyeJin/job-management/js/test-connection.js
 import { auth, db } from "../../../shared/firebase-config.js";
 import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 import {

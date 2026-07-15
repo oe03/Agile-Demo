@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Post a Job - CariMakan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/dashboard.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="logo">Cari<span>Makan</span></div>
+      <nav class="topnav">
+        <a href="employer-dashboard.html">Dashboard</a>
+        <button id="logoutBtn" class="logout-btn">Log Out</button>
+      </nav>
+    </header>
+
+    <main class="page-content">
+      <div class="form-card">
+        <h1 id="formTitle">Post a New Job</h1>
+
+        <form id="postJobForm" novalidate>
+          <div class="field floating">
+            <input type="text" id="companyName" placeholder=" " />
+            <label for="companyName">Company name</label>
+            <span class="field-error" id="companyNameError"></span>
+          </div>
+
+          <div class="field floating">
+            <input type="text" id="title" placeholder=" " />
+            <label for="title">Job title</label>
+            <span class="field-error" id="titleError"></span>
+          </div>
+
+          <div class="field floating">
+            <textarea id="description" placeholder=" " rows="5"></textarea>
+            <label for="description">Job description</label>
+            <span class="field-error" id="descriptionError"></span>
+          </div>
+
+          <div class="field">
+            <div class="prefix-row">
+              <div class="prefix-box">RM</div>
+              <div class="prefix-input-box floating">
+                <input
+                  type="text"
+                  id="salary"
+                  placeholder=" "
+                  inputmode="numeric"
+                />
+                <label for="salary">Salary</label>
+              </div>
+            </div>
+            <span class="field-error" id="salaryError"></span>
+          </div>
+
+          <div class="field floating">
+            <input type="text" id="location" placeholder=" " />
+            <label for="location">Location</label>
+            <span class="field-error" id="locationError"></span>
+          </div>
+
+          <div class="field select-field">
+            <label for="jobType">Job type</label>
+            <select id="jobType">
+              <option value="" disabled selected>Select job type</option>
+              <option value="fulltime">Full time</option>
+              <option value="parttime">Part time</option>
+              <option value="internship">Internship</option>
+            </select>
+            <span class="field-error" id="jobTypeError"></span>
+          </div>
+
+          <div class="field floating">
+            <input type="text" id="skills" placeholder=" " />
+            <label for="skills">Required skills (comma separated)</label>
+            <span class="field-error" id="skillsError"></span>
+          </div>
+
+          <button type="submit" class="submit-btn" id="submitBtn">
+            Post Job
+          </button>
+
+          <p id="statusMsg" class="status"></p>
+        </form>
+      </div>
+    </main>
+
+    <script type="module" src="js/post-jobs.js"></script>
+  </body>
+</html>

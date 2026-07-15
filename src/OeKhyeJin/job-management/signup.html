@@ -1,31 +1,86 @@
-<!-- src/OeKhyeJin/job-management/signup.html -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Sign Up - Job Portal</title>
-    <link rel="stylesheet" href="css/style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Join CariMakan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/loginsignup.css" />
   </head>
   <body>
-    <div class="auth-container">
-      <h1>Sign Up</h1>
-      <form id="signupForm">
-        <label for="email">Email</label>
-        <input type="email" id="email" required />
+    <div class="logo">Cari<span>Makan</span></div>
 
-        <label for="password">Password</label>
-        <input type="password" id="password" required minlength="6" />
+    <div class="auth-wrapper">
+      <div class="auth-card">
+        <h1>Join CariMakan now</h1>
 
-        <label for="role">I am a...</label>
-        <select id="role" required>
-          <option value="jobseeker">Job Seeker</option>
-          <option value="employer">Employer</option>
-        </select>
+        <form id="signupForm" novalidate>
+          <div class="field floating">
+            <input type="text" id="fullName" placeholder=" " />
+            <label for="fullName">Full name</label>
+            <span class="field-error" id="fullNameError"></span>
+          </div>
 
-        <button type="submit">Sign Up</button>
-        <p id="errorMsg" class="error"></p>
-      </form>
-      <p>Already have an account? <a href="login.html">Log in</a></p>
+          <div class="field floating">
+            <input type="email" id="email" placeholder=" " />
+            <label for="email">Email</label>
+            <span class="field-error" id="emailError"></span>
+          </div>
+
+          <div class="field">
+            <div class="phone-row">
+              <div class="phone-code-box" id="phoneCodeBox">+60</div>
+              <div class="phone-input-box floating">
+                <input
+                  type="tel"
+                  id="contactNumber"
+                  placeholder=" "
+                  maxlength="10"
+                />
+                <label for="contactNumber">Contact number</label>
+              </div>
+            </div>
+            <span class="field-error" id="contactNumberError"></span>
+          </div>
+
+          <div class="field floating">
+            <div class="password-wrapper">
+              <input type="password" id="password" placeholder=" " />
+              <label for="password">Password</label>
+              <button
+                type="button"
+                class="toggle-visibility"
+                id="togglePassword"
+              >
+                Show
+              </button>
+            </div>
+            <span class="field-error" id="passwordError"></span>
+          </div>
+
+          <div class="field select-field">
+            <label for="role">I am a...</label>
+            <select id="role">
+              <option value="" disabled selected>Select your role</option>
+              <option value="jobseeker">Job Seeker</option>
+              <option value="employer">Employer</option>
+            </select>
+            <span class="field-error" id="roleError"></span>
+          </div>
+
+          <button type="submit" class="signin-btn">Join now</button>
+
+          <p id="errorMsg" class="error"></p>
+        </form>
+      </div>
+
+      <p class="signup-prompt">
+        Already have an account? <a href="login.html">Sign in</a>
+      </p>
     </div>
 
     <script type="module" src="js/signup.js"></script>
