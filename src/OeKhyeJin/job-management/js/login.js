@@ -57,12 +57,16 @@ function showFieldErrors(errors) {
 }
 
 function redirectByRole(role) {
-  if (role === "admin") {
+  const normalizedRole = String(role).toLowerCase().trim();
+
+  if (normalizedRole === "admin") {
     window.location.href = "admin-dashboard.html";
-  } else if (role === "employer") {
+  } else if (normalizedRole === "employer") {
     window.location.href = "employer-dashboard.html";
   } else {
-    window.location.href = "jobseeker-homepage.html";
+    // Redirects to your module root path
+    window.location.href =
+      "../../MAHJINNHUEI/JobRecruitmentModule/job-listings.html";
   }
 }
 
@@ -84,8 +88,12 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     });
     const validation = await validateRes.json();
 
-    if (!validation.valid) {
-      showFieldErrors(validation.errors);
+    // 🟢 Fix: Check against your backend's exact response shape
+    if (validation.status === "error") {
+      showFieldErrors({
+        email: validation.message || "Invalid credentials",
+        password: validation.message || "Invalid credentials",
+      });
       return;
     }
 
@@ -97,15 +105,29 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     );
     const idToken = await userCredential.user.getIdToken();
 
-    // Step 3: Fetch role from backend
-    const profileRes = await fetch(`${API_URL}/users/me`, {
-      headers: { Authorization: `Bearer ${idToken}` },
-    });
-    if (!profileRes.ok) throw new Error("Could not fetch user role");
-    const profile = await profileRes.json();
+    // Step 3: Fetch role details from backend or fall back to validation block data
+    let finalRole = "Job Seeker";
+    try {
+      const profileRes = await fetch(`${API_URL}/users/me`, {
+        headers: { Authorization: `Bearer ${idToken}` },
+      });
+      if (profileRes.ok) {
+        const profile = await profileRes.json();
+        finalRole = profile.role;
+      } else {
+        finalRole = validation.role || "Job Seeker";
+      }
+    } catch (err) {
+      // Fallback if /users/me endpoint isn't ready
+      finalRole = validation.role || "Job Seeker";
+    }
+
+    // 🟢 Crucial: Store the session tokens so job-listings.js passes its verification gate!
+    localStorage.setItem("token", idToken || validation.token);
+    localStorage.setItem("role", finalRole);
 
     // Step 4: Redirect based on role
-    redirectByRole(profile.role);
+    redirectByRole(finalRole);
   } catch (error) {
     errorMsg.textContent = getFriendlyErrorMessage(error.code);
     console.error("Login error:", error.code, error.message);
