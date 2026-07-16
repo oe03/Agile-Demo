@@ -33,12 +33,14 @@ def profile():
         snapshot = user_ref.get()
         if snapshot.exists:
             stored = snapshot.to_dict()
-            user_data.update({
-                "full_name": stored.get("full_name", user_data["full_name"]),
-                "email": stored.get("email", user_data["email"]),
-                "contact_number": stored.get("contact_number", ""),
-                "role": stored.get("role", user_data["role"]),
-            })
+            user_data.update(
+                {
+                    "full_name": stored.get("full_name", user_data["full_name"]),
+                    "email": stored.get("email", user_data["email"]),
+                    "contact_number": stored.get("contact_number", ""),
+                    "role": stored.get("role", user_data["role"]),
+                }
+            )
 
     if request.method == "POST":
         full_name = request.form.get("full_name", "").strip()
@@ -82,8 +84,7 @@ def profile():
             if db is not None and user_ref is not None:
                 user_ref.update(update_payload)
             else:
-                print("[profile] Firebase not connected. "
-                      "Would have updated:", update_payload)
+                print("[profile] Firebase not connected. Would have updated:", update_payload)
 
             # keep the session display name in sync
             session["full_name"] = full_name

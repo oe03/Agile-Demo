@@ -9,12 +9,7 @@ register_bp = Blueprint("register", __name__)
 
 @register_bp.route("/register", methods=["GET", "POST"])
 def register():
-    form_data = {
-        "full_name": "",
-        "email": "",
-        "contact_number": "",
-        "role": "job_seeker"
-    }
+    form_data = {"full_name": "", "email": "", "contact_number": "", "role": "job_seeker"}
     errors = {}
 
     if request.method == "POST":
@@ -30,7 +25,7 @@ def register():
             "full_name": full_name,
             "email": email,
             "contact_number": contact_number,
-            "role": role
+            "role": role,
         }
 
         # --- Subtask: display appropriate error messages -------------
@@ -45,9 +40,7 @@ def register():
             # Check email isn't already registered (only possible once
             # Firebase is actually connected / populated)
             if db is not None:
-                existing = db.collection("users").where(
-                    "email", "==", email
-                ).limit(1).get()
+                existing = db.collection("users").where("email", "==", email).limit(1).get()
                 if len(existing) > 0:
                     errors["email"] = "This email is already registered."
 
@@ -61,7 +54,7 @@ def register():
                     "contact_number": contact_number,
                     "role": role,
                     "password_hash": hashed_pw,
-                    "created_at": datetime.datetime.utcnow().isoformat()
+                    "created_at": datetime.datetime.utcnow().isoformat(),
                 }
 
                 if db is not None:
@@ -70,8 +63,7 @@ def register():
                     # Firebase not connected yet (placeholder key in
                     # use) - fall back so the flow can still be
                     # demonstrated end-to-end.
-                    print("[register] Firebase not connected. "
-                          "Would have saved:", new_user)
+                    print("[register] Firebase not connected. Would have saved:", new_user)
 
                 return redirect(url_for("register.register_success"))
 

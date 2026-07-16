@@ -24,6 +24,7 @@ app.register_blueprint(profile_bp)
 @app.route("/")
 def home():
     from flask import redirect, url_for
+
     return redirect(url_for("login.login"))
 
 

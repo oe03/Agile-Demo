@@ -10,8 +10,7 @@ EMAIL_REGEX = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
 PHONE_REGEX = re.compile(r"^(\+?\d{1,3}[- ]?)?\d{9,11}$")
 
 
-def validate_registration_form(full_name, email, contact_number, role,
-                                password, confirm_password):
+def validate_registration_form(full_name, email, contact_number, role, password, confirm_password):
     """
     Validates all registration fields.
     Returns a dict: {"valid": bool, "errors": {field: message}}
@@ -77,10 +76,7 @@ def hash_password(plain_password: str) -> str:
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Check a plain-text password against a stored bcrypt hash."""
     try:
-        return bcrypt.checkpw(
-            plain_password.encode("utf-8"),
-            hashed_password.encode("utf-8")
-        )
+        return bcrypt.checkpw(plain_password.encode("utf-8"), hashed_password.encode("utf-8"))
     except (ValueError, TypeError):
         return False
 

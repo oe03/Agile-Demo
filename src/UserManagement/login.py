@@ -42,9 +42,7 @@ def login():
                 user_data = None
 
                 if db is not None:
-                    matches = db.collection("users").where(
-                        "email", "==", email
-                    ).limit(1).get()
+                    matches = db.collection("users").where("email", "==", email).limit(1).get()
                     if len(matches) > 0:
                         user_doc = matches[0]
                         user_data = user_doc.to_dict()
