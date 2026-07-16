@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Job Portal{% endblock %}
+
+{% block content %}
+<div class="dashboard-page">
+  <div class="dashboard-header">
+    <h1>Job listings</h1>
+    <span class="role-badge">{{ role_label }}</span>
+  </div>
+
+  <div class="search-bar">
+    <input type="text" placeholder="Describe what you're looking for (role, industry, skills...)" disabled>
+    <button class="btn-primary" style="width: auto; padding: 12px 28px;" disabled>Search</button>
+  </div>
+
+  <div class="job-list">
+    {% if jobs and jobs|length > 0 %}
+      <ul>
+        {% for job in jobs %}
+          <li>{{ job.title }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-icon">&#128203;</div>
+        <h3>No job listings yet</h3>
+        <p>
+          This list is empty because the Firebase database hasn't been
+          populated with job postings yet. Once real data is added to
+          the "jobs" collection, listings will appear here automatically.
+        </p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

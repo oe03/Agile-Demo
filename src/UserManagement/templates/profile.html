@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}My Profile - Job Portal{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card wide">
+    <h1>Profile settings</h1>
+    <p class="subtitle">Update your personal information and password.</p>
+
+    {% if success_message %}
+      <div class="alert alert-success">{{ success_message }}</div>
+    {% endif %}
+    {% if errors.get('current_password') %}
+      <div class="alert alert-error">{{ errors['current_password'] }}</div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('profile.profile') }}" novalidate>
+
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" value="{{ user_data.email }}" disabled>
+        <div class="field-hint">Email address cannot be changed.</div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="full_name">Full Name</label>
+          <input
+            type="text" id="full_name" name="full_name"
+            class="{{ 'has-error' if errors.get('full_name') }}"
+            value="{{ user_data.full_name }}">
+          {% if errors.get('full_name') %}
+            <div class="field-error">{{ errors['full_name'] }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="contact_number">Contact Number</label>
+          <input
+            type="tel" id="contact_number" name="contact_number"
+            class="{{ 'has-error' if errors.get('contact_number') }}"
+            value="{{ user_data.contact_number }}">
+          {% if errors.get('contact_number') %}
+            <div class="field-error">{{ errors['contact_number'] }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <hr style="border: none; border-top: 1px solid var(--color-border); margin: 28px 0;">
+
+      <p class="subtitle" style="margin-bottom: 16px;">Change password (leave blank to keep your current password)</p>
+
+      <div class="form-group">
+        <label for="current_password">Current Password</label>
+        <input type="password" id="current_password" name="current_password" placeholder="Required only if changing password">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="new_password">New Password</label>
+          <input
+            type="password" id="new_password" name="new_password"
+            class="{{ 'has-error' if errors.get('new_password') }}"
+            placeholder="At least 8 characters">
+          {% if errors.get('new_password') %}
+            <div class="field-error">{{ errors['new_password'] }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="confirm_new_password">Confirm New Password</label>
+          <input
+            type="password" id="confirm_new_password" name="confirm_new_password"
+            class="{{ 'has-error' if errors.get('confirm_new_password') }}"
+            placeholder="Re-enter new password">
+          {% if errors.get('confirm_new_password') %}
+            <div class="field-error">{{ errors['confirm_new_password'] }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary">Save changes</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

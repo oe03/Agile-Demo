@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Register - Job Portal{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card wide">
+    <h1>Create your account</h1>
+    <p class="subtitle">Register to search jobs, apply, or post vacancies.</p>
+
+    {% if errors.get('email') and 'already registered' in errors.get('email') %}
+      <div class="alert alert-error">{{ errors['email'] }}</div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('register.register') }}" novalidate>
+
+      <div class="form-group">
+        <label for="full_name">Full Name</label>
+        <input
+          type="text" id="full_name" name="full_name"
+          class="{{ 'has-error' if errors.get('full_name') }}"
+          value="{{ form_data.full_name }}" placeholder="e.g. Ahmad Bin Ismail">
+        {% if errors.get('full_name') %}
+          <div class="field-error">{{ errors['full_name'] }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input
+            type="email" id="email" name="email"
+            class="{{ 'has-error' if errors.get('email') }}"
+            value="{{ form_data.email }}" placeholder="you@example.com">
+          {% if errors.get('email') %}
+            <div class="field-error">{{ errors['email'] }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="contact_number">Contact Number</label>
+          <input
+            type="tel" id="contact_number" name="contact_number"
+            class="{{ 'has-error' if errors.get('contact_number') }}"
+            value="{{ form_data.contact_number }}" placeholder="012-3456789">
+          {% if errors.get('contact_number') %}
+            <div class="field-error">{{ errors['contact_number'] }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="role">User Role</label>
+        <select id="role" name="role" class="{{ 'has-error' if errors.get('role') }}">
+          <option value="job_seeker" {{ 'selected' if form_data.role == 'job_seeker' }}>Job Seeker</option>
+          <option value="employer" {{ 'selected' if form_data.role == 'employer' }}>Employer</option>
+        </select>
+        {% if errors.get('role') %}
+          <div class="field-error">{{ errors['role'] }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password" id="password" name="password"
+            class="{{ 'has-error' if errors.get('password') }}"
+            placeholder="At least 8 characters">
+          {% if errors.get('password') %}
+            <div class="field-error">{{ errors['password'] }}</div>
+          {% else %}
+            <div class="field-hint">Use 8+ characters with an uppercase letter and a number.</div>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="confirm_password">Confirm Password</label>
+          <input
+            type="password" id="confirm_password" name="confirm_password"
+            class="{{ 'has-error' if errors.get('confirm_password') }}"
+            placeholder="Re-enter your password">
+          {% if errors.get('confirm_password') %}
+            <div class="field-error">{{ errors['confirm_password'] }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary">Create account</button>
+    </form>
+
+    <div class="auth-footer-link">
+      Already have an account? <a href="{{ url_for('login.login') }}">Log in</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

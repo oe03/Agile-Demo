@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Registration Successful{% endblock %}
+
+{% block content %}
+<div class="success-page">
+  <div class="auth-card success-card">
+    <div class="success-icon">&#10003;</div>
+    <h1>Account created</h1>
+    <p class="subtitle">Your account has been registered successfully. You can now log in.</p>
+    <a class="btn-secondary" href="{{ url_for('login.login') }}">Go to Log in</a>
+  </div>
+</div>
+{% endblock %}

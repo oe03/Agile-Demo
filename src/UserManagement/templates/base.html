@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Job Portal{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <nav class="top-nav">
+    <a class="brand" href="{{ url_for('login.login') }}">JobPortal <span>MY</span></a>
+    <div class="nav-links">
+      {% if session.get('user_id') %}
+        <a href="{{ url_for('profile.profile') }}">My Profile</a>
+        <a href="{{ url_for('login.logout') }}">Log out</a>
+      {% else %}
+        <a href="{{ url_for('login.login') }}">Log in</a>
+        <a href="{{ url_for('register.register') }}">Register</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  {% block content %}{% endblock %}
+</body>
+</html>
