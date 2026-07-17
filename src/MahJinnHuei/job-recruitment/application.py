@@ -17,12 +17,36 @@ UPLOAD_DIR = os.path.join(os.path.dirname(__file__), "uploaded_resumes")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
+def time_ago(created_at: datetime) -> str:
+    if created_at.tzinfo is None:
+        created_at = created_at.replace(tzinfo=timezone.utc)
+    now = datetime.now(timezone.utc)
+    diff_seconds = int((now - created_at).total_seconds())
+    if diff_seconds < 0:
+        diff_seconds = 0
+    if diff_seconds < 60:
+        return f"{diff_seconds}s ago"
+    diff_minutes = diff_seconds // 60
+    if diff_minutes < 60:
+        return f"{diff_minutes}min ago"
+    diff_hours = diff_minutes // 60
+    if diff_hours < 24:
+        return f"{diff_hours}h ago"
+    diff_days = diff_hours // 24
+    if diff_days == 1:
+        return "Yesterday"
+    if diff_days < 7:
+        return f"{diff_days} days ago"
+    return created_at.strftime("%d %b %Y")
+
+
 class ApplicationValidation(BaseModel):
     fullName: str
     email: str
     contactNumber: str
 
 
+# --- Validate application text fields ---
 @router.post("/validate-application")
 def validate_application(data: ApplicationValidation):
     errors = {}
@@ -45,6 +69,7 @@ def validate_application(data: ApplicationValidation):
     return {"valid": True, "errors": {}}
 
 
+# --- Submit a job application (job seeker, requires login) ---
 @router.post("/applications")
 async def submit_application(
     jobId: str = Form(...),
@@ -99,7 +124,7 @@ async def submit_application(
         "applicantId": user["uid"],
         "applicantName": fullName,
         "applicantEmail": email,
-        "contactNumber": f"+60{contactNumber}",
+        "contactNumber": contactNumber,
         "coverNote": coverNote,
         "resumeUrl": resume_url,
         "status": "pending",
@@ -108,29 +133,8 @@ async def submit_application(
 
     return {"id": doc_ref.id, "message": "Application submitted successfully"}
 
-def time_ago(created_at: datetime) -> str:
-    if created_at.tzinfo is None:
-        created_at = created_at.replace(tzinfo=timezone.utc)
-    now = datetime.now(timezone.utc)
-    diff_seconds = int((now - created_at).total_seconds())
-    if diff_seconds < 0:
-        diff_seconds = 0
-    if diff_seconds < 60:
-        return f"{diff_seconds}s ago"
-    diff_minutes = diff_seconds // 60
-    if diff_minutes < 60:
-        return f"{diff_minutes}min ago"
-    diff_hours = diff_minutes // 60
-    if diff_hours < 24:
-        return f"{diff_hours}h ago"
-    diff_days = diff_hours // 24
-    if diff_days == 1:
-        return "Yesterday"
-    if diff_days < 7:
-        return f"{diff_days} days ago"
-    return created_at.strftime("%d %b %Y")
 
-
+# --- Get all applications submitted to jobs posted by the logged-in employer ---
 @router.get("/applications/mine")
 def get_my_applications(user=Depends(verify_token)):
     profile_doc = db.collection("users").document(user["uid"]).get()
@@ -155,25 +159,3 @@ def get_my_applications(user=Depends(verify_token)):
         applications.append({"id": doc.id, **data})
 
     return applications
-
-class StatusUpdate(BaseModel):
-    status: str  # "shortlisted" or "rejected"
-
-@router.put("/applications/{application_id}/status")
-def update_application_status(application_id: str, data: StatusUpdate, user=Depends(verify_token)):
-    valid_statuses = ["pending", "shortlisted", "rejected"]
-    if data.status not in valid_statuses:
-        raise HTTPException(status_code=400, detail="Invalid status value")
-
-    doc_ref = db.collection("applications").document(application_id)
-    doc = doc_ref.get()
-
-    if not doc.exists:
-        raise HTTPException(status_code=404, detail="Application not found")
-
-    application = doc.to_dict()
-    if application.get("employerId") != user["uid"]:
-        raise HTTPException(status_code=403, detail="You can only update applications for your own job postings")
-
-    doc_ref.update({"status": data.status})
-    return {"message": f"Application marked as {data.status}"}

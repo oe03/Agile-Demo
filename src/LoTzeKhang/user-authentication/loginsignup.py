@@ -97,3 +97,41 @@ def get_my_profile(user=Depends(verify_token)):
     if not doc.exists:
         raise HTTPException(status_code=404, detail="User profile not found")
     return doc.to_dict()
+class ProfileUpdate(BaseModel):
+    fullName: str
+    contactNumber: str
+
+class ProfileValidation(BaseModel):
+    fullName: str
+    contactNumber: str
+
+@router.post("/validate-profile")
+def validate_profile(data: ProfileValidation):
+    errors = {}
+
+    if not data.fullName.strip():
+        errors["fullName"] = "This field is required"
+
+    if not data.contactNumber.strip():
+        errors["contactNumber"] = "This field is required"
+    elif not re.match(PHONE_REGEX, data.contactNumber):
+        errors["contactNumber"] = "Please enter a valid contact number (9-10 digits)"
+
+    if errors:
+        return {"valid": False, "errors": errors}
+    return {"valid": True, "errors": {}}
+
+@router.put("/users/me")
+def update_my_profile(profile: ProfileUpdate, user=Depends(verify_token)):
+    doc_ref = db.collection("users").document(user["uid"])
+    doc = doc_ref.get()
+
+    if not doc.exists:
+        raise HTTPException(status_code=404, detail="User profile not found")
+
+    doc_ref.update({
+        "fullName": profile.fullName,
+        "contactNumber": profile.contactNumber,
+    })
+    return {"message": "Profile updated successfully"}
+

@@ -5,7 +5,6 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 
 const API_URL = "http://127.0.0.1:8000";
-const REFRESH_INTERVAL_MS = 5000;
 
 const JOB_TYPE_LABELS = {
   fulltime: "Full time",
@@ -21,9 +20,7 @@ onAuthStateChanged(auth, async (user) => {
     window.location.href = "../../LoTzeKhang/user-authentication/login.html";
     return;
   }
-  document.getElementById("welcomeMsg").textContent = `Welcome, ${user.email}`;
-  await loadMyJobs();
-  setInterval(loadMyJobs, REFRESH_INTERVAL_MS);
+  await loadJobs();
 });
 
 document.getElementById("logoutBtn").addEventListener("click", async () => {
@@ -32,32 +29,23 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
   window.location.href = "../../LoTzeKhang/user-authentication/login.html";
 });
 
-async function loadMyJobs() {
+async function loadJobs() {
   const jobsList = document.getElementById("jobsList");
 
   try {
-    const idToken = await auth.currentUser.getIdToken();
-    const response = await fetch(`${API_URL}/jobs/mine`, {
-      headers: { Authorization: `Bearer ${idToken}` },
-    });
-
+    const response = await fetch(`${API_URL}/jobs`);
     if (!response.ok) throw new Error("Failed to load jobs");
     jobsData = await response.json();
 
     if (jobsData.length === 0) {
-      jobsList.innerHTML = `<p class="empty-state">You haven't posted any jobs yet.</p>`;
-      document.getElementById(
-        "detailPanel"
-      ).innerHTML = `<p class="empty-state">Select a job on the left to view details.</p>`;
+      jobsList.innerHTML = `<p class="empty-state">No jobs available right now.</p>`;
       return;
     }
 
     renderJobList();
-
-    const stillExists = jobsData.some((job) => job.id === selectedJobId);
-    selectJob(stillExists ? selectedJobId : jobsData[0].id);
+    selectJob(jobsData[0].id);
   } catch (error) {
-    jobsList.innerHTML = `<p class="empty-state">Failed to load your job postings.</p>`;
+    jobsList.innerHTML = `<p class="empty-state">Failed to load jobs.</p>`;
     console.error("Load jobs error:", error);
   }
 }
@@ -107,12 +95,7 @@ function renderDetailPanel(job) {
 
   detailPanel.innerHTML = `
       <div class="detail-header">
-        <div class="detail-header-top">
-          <h2>${escapeHtml(job.title)}</h2>
-          <a href="post-jobs.html?jobId=${escapeHtml(
-            job.id
-          )}" class="edit-btn">Edit</a>
-        </div>
+        <h2>${escapeHtml(job.title)}</h2>
         <div class="detail-company">${escapeHtml(job.companyName)}</div>
       </div>
   
@@ -137,6 +120,14 @@ function renderDetailPanel(job) {
         <h3>Required Skills</h3>
         <div class="job-skills">${skillsHtml}</div>
       </div>
+  
+      <a href="apply-job.html?jobId=${escapeHtml(
+        job.id
+      )}&title=${encodeURIComponent(job.title)}&company=${encodeURIComponent(
+    job.companyName
+  )}" class="apply-btn">
+        Apply
+      </a>
     `;
 }
 

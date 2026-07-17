@@ -3,13 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Applied Candidates - CariMakan</title>
+    <title>Job Listings - CariMakan</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/job-listings.css" />
     <link rel="stylesheet" href="../../shared/logo.css" />
     <link rel="stylesheet" href="../../shared/account-menu.css" />
   </head>
@@ -17,9 +17,6 @@
     <header class="topbar">
       <a href="#" id="logoLink" class="logo">Cari<span>Makan</span></a>
       <nav class="topnav">
-        <a href="employer-dashboard.html">Dashboard</a>
-        <a href="candidates.html" class="active">View Applied Candidates</a>
-
         <div class="account-menu">
           <button id="accountMenuBtn" class="account-menu-trigger">
             Account ▾
@@ -36,28 +33,26 @@
 
     <main class="split-page">
       <div class="split-header">
-        <h1>Applied Candidates</h1>
+        <h1>Available Jobs</h1>
       </div>
 
       <div class="split-container">
         <div class="split-left">
-          <h2 class="section-title">All Applicants</h2>
-          <div id="candidatesList" class="jobs-list-compact">
-            <p class="empty-state">Loading applicants...</p>
+          <h2 class="section-title">All Jobs</h2>
+          <div id="jobsList" class="jobs-list-compact">
+            <p class="empty-state">Loading jobs...</p>
           </div>
         </div>
 
         <div class="split-right">
           <div id="detailPanel" class="detail-panel">
-            <p class="empty-state">
-              Select a candidate on the left to view details.
-            </p>
+            <p class="empty-state">Select a job on the left to view details.</p>
           </div>
         </div>
       </div>
     </main>
 
-    <script type="module" src="js/candidates.js"></script>
+    <script type="module" src="js/job-listings.js"></script>
     <script type="module">
       import { initLogoNav } from "../../shared/logo-nav.js";
       initLogoNav();

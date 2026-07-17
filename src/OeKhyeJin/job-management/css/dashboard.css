@@ -612,3 +612,193 @@
     background: var(--primary);
     color: #fff;
   }
+
+  /* ---------- Status badge ---------- */
+
+.status-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+.status-pending {
+  background: var(--bg);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.status-shortlisted {
+  background: #E8F5E9;
+  color: var(--success);
+}
+
+.status-rejected {
+  background: #FDECEA;
+  color: var(--error);
+}
+
+/* ---------- Shortlist / Reject action buttons ---------- */
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.shortlist-btn,
+.reject-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid;
+  transition: all 0.15s ease;
+}
+
+.shortlist-btn {
+  background: var(--success);
+  color: #fff;
+  border-color: var(--success);
+}
+
+.shortlist-btn:hover {
+  background: #219150;
+}
+
+.reject-btn {
+  background: transparent;
+  color: var(--error);
+  border-color: var(--error);
+}
+
+.reject-btn:hover {
+  background: var(--error);
+  color: #fff;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 32px 0;
+}
+
+.phone-row {
+  display: flex;
+  gap: 8px;
+}
+
+.phone-code-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  min-width: 50px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--bg);
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.phone-code-box.invalid {
+  border-color: var(--error);
+  color: var(--error);
+}
+
+.phone-input-box {
+  position: relative;
+  flex: 1;
+}
+
+.phone-input-box input {
+  width: 100%;
+  padding: 18px 14px 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  color: var(--text);
+  background: transparent;
+  transition: border-color 0.15s ease;
+}
+
+.phone-input-box input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.phone-input-box label {
+  position: absolute;
+  left: 14px;
+  top: 16px;
+  font-size: 15px;
+  color: var(--text-muted);
+  pointer-events: none;
+  transition: all 0.15s ease;
+  background: var(--card-bg);
+  padding: 0 4px;
+}
+
+.phone-input-box input:focus + label,
+.phone-input-box input:not(:placeholder-shown) + label {
+  top: -8px;
+  left: 10px;
+  font-size: 12px;
+  color: var(--primary);
+}
+
+.phone-input-box input.invalid,
+.phone-input-box input.invalid:focus {
+  border-color: var(--error);
+}
+
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding: 18px 14px 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  color: var(--text);
+  background: transparent;
+  transition: border-color 0.15s ease;
+}
+
+.password-wrapper input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.password-wrapper label {
+  position: absolute;
+  left: 14px;
+  top: 16px;
+  font-size: 15px;
+  color: var(--text-muted);
+  pointer-events: none;
+  transition: all 0.15s ease;
+  background: var(--card-bg);
+  padding: 0 4px;
+}
+
+.password-wrapper input:focus + label,
+.password-wrapper input:not(:placeholder-shown) + label {
+  top: -8px;
+  left: 10px;
+  font-size: 12px;
+  color: var(--primary);
+}
+
+.password-wrapper input.invalid,
+.password-wrapper input.invalid:focus {
+  border-color: var(--error);
+}

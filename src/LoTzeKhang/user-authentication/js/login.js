@@ -60,13 +60,14 @@ function redirectByRole(role) {
   const normalizedRole = String(role).toLowerCase().trim();
 
   if (normalizedRole === "admin") {
-    window.location.href = "admin-dashboard.html";
-  } else if (normalizedRole === "employer") {
-    window.location.href = "employer-dashboard.html";
-  } else {
-    // Redirects to your module root path
     window.location.href =
-      "../../MAHJINNHUEI/JobRecruitmentModule/job-listings.html";
+      "../../OeKhyeJin/job-management/admin-dashboard.html";
+  } else if (normalizedRole === "employer") {
+    window.location.href =
+      "../../OeKhyeJin/job-management/employer-dashboard.html";
+  } else {
+    window.location.href =
+      "../../MahJinnHuei/job-recruitment/job-listings.html";
   }
 }
 
@@ -80,7 +81,6 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
   errorMsg.textContent = "";
 
   try {
-    // Step 1: Validate via Python backend
     const validateRes = await fetch(`${API_URL}/validate-login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -88,16 +88,11 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     });
     const validation = await validateRes.json();
 
-    // 🟢 Fix: Check against your backend's exact response shape
-    if (validation.status === "error") {
-      showFieldErrors({
-        email: validation.message || "Invalid credentials",
-        password: validation.message || "Invalid credentials",
-      });
+    if (!validation.valid) {
+      showFieldErrors(validation.errors);
       return;
     }
 
-    // Step 2: Validation passed — attempt real Firebase login
     const userCredential = await signInWithEmailAndPassword(
       auth,
       email,
@@ -105,29 +100,16 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     );
     const idToken = await userCredential.user.getIdToken();
 
-    // Step 3: Fetch role details from backend or fall back to validation block data
-    let finalRole = "Job Seeker";
-    try {
-      const profileRes = await fetch(`${API_URL}/users/me`, {
-        headers: { Authorization: `Bearer ${idToken}` },
-      });
-      if (profileRes.ok) {
-        const profile = await profileRes.json();
-        finalRole = profile.role;
-      } else {
-        finalRole = validation.role || "Job Seeker";
-      }
-    } catch (err) {
-      // Fallback if /users/me endpoint isn't ready
-      finalRole = validation.role || "Job Seeker";
-    }
+    const profileRes = await fetch(`${API_URL}/users/me`, {
+      headers: { Authorization: `Bearer ${idToken}` },
+    });
+    if (!profileRes.ok) throw new Error("Could not fetch user role");
+    const profile = await profileRes.json();
 
-    // 🟢 Crucial: Store the session tokens so job-listings.js passes its verification gate!
-    localStorage.setItem("token", idToken || validation.token);
-    localStorage.setItem("role", finalRole);
+    localStorage.setItem("token", idToken);
+    localStorage.setItem("role", profile.role);
 
-    // Step 4: Redirect based on role
-    redirectByRole(finalRole);
+    redirectByRole(profile.role);
   } catch (error) {
     errorMsg.textContent = getFriendlyErrorMessage(error.code);
     console.error("Login error:", error.code, error.message);
