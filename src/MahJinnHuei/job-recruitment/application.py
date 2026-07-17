@@ -106,7 +106,7 @@ async def submit_application(
         raise HTTPException(status_code=404, detail="Job not found")
     job_data = job_doc.to_dict()
 
-    file_ext = os.path.splitext(resume.filename)[1]
+    file_ext = os.path.splitext(resume.filename or "")[1]
     unique_filename = f"{uuid.uuid4()}{file_ext}"
     file_path = os.path.join(UPLOAD_DIR, unique_filename)
 
