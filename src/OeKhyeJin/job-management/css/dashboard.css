@@ -1,0 +1,804 @@
+:root {
+    --primary: #2C3E50;
+    --primary-hover: #1F2D3A;
+    --bg: #F5F7F8;
+    --card-bg: #FFFFFF;
+    --border: #DCE3E8;
+    --text: #1B2631;
+    --text-muted: #6B7C93;
+    --error: #C0392B;
+    --success: #27AE60;
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+  
+  body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+  }
+  
+  /* ---------- Top bar ---------- */
+  
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 40px;
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .logo {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    color: var(--primary);
+  }
+  
+  .logo span {
+    color: var(--primary);
+  }
+  
+  .topnav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .topnav a {
+    color: var(--text);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .topnav a:hover {
+    color: var(--primary);
+  }
+  
+  .topnav a.active {
+    color: var(--primary);
+    font-weight: 600;
+  }
+  
+  .logout-btn {
+    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  
+  .logout-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+  
+  /* ---------- Page content / form card (post-jobs.html) ---------- */
+  
+  .page-content {
+    display: flex;
+    justify-content: center;
+    padding: 40px 24px;
+  }
+  
+  .form-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 36px;
+    width: 100%;
+    max-width: 520px;
+    box-shadow: 0 4px 24px rgba(44, 62, 80, 0.06);
+  }
+  
+  .form-card h1 {
+    margin: 0 0 24px;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  
+  /* ---------- Floating label fields (input + textarea) ---------- */
+  
+  .field {
+    margin-bottom: 16px;
+  }
+  
+  .field.floating {
+    position: relative;
+  }
+  
+  .field.floating input,
+  .field.floating textarea {
+    width: 100%;
+    padding: 18px 14px 8px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    background: transparent;
+    transition: border-color 0.15s ease;
+    resize: vertical;
+  }
+  
+  .field.floating textarea {
+    padding-top: 22px;
+  }
+  
+  .field.floating input:focus,
+  .field.floating textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+  
+  .field.floating label {
+    position: absolute;
+    left: 14px;
+    top: 16px;
+    font-size: 15px;
+    color: var(--text-muted);
+    pointer-events: none;
+    transition: all 0.15s ease;
+    background: var(--card-bg);
+    padding: 0 4px;
+  }
+  
+  .field.floating input:focus + label,
+  .field.floating input:not(:placeholder-shown) + label,
+  .field.floating textarea:focus + label,
+  .field.floating textarea:not(:placeholder-shown) + label {
+    top: -8px;
+    left: 10px;
+    font-size: 12px;
+    color: var(--primary);
+  }
+  
+  .field.floating input.invalid,
+  .field.floating input.invalid:focus,
+  .field.floating textarea.invalid,
+  .field.floating textarea.invalid:focus {
+    border-color: var(--error);
+  }
+  
+  .field.floating input.invalid + label,
+  .field.floating input.invalid:focus + label,
+  .field.floating input.invalid:not(:placeholder-shown) + label,
+  .field.floating textarea.invalid + label,
+  .field.floating textarea.invalid:focus + label,
+  .field.floating textarea.invalid:not(:placeholder-shown) + label {
+    color: var(--error);
+  }
+  
+  /* ---------- Field-level error messages ---------- */
+  
+  .field-error {
+    display: block;
+    color: var(--error);
+    font-size: 12px;
+    line-height: 1.3;
+    margin-top: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease, margin-top 0.2s ease;
+  }
+  
+  .field-error:not(:empty) {
+    margin-top: 6px;
+    max-height: 20px;
+  }
+  
+  /* ---------- Select field (Job Type) ---------- */
+  
+  .field.select-field {
+    margin-bottom: 16px;
+    text-align: left;
+  }
+  
+  .field.select-field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  
+  .field.select-field label.invalid {
+    color: var(--error);
+  }
+  
+  .field.select-field select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    background: var(--card-bg);
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236B7C93' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+  }
+  
+  .field.select-field select:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+  
+  .field.select-field select.invalid {
+    border-color: var(--error);
+    color: var(--error);
+  }
+  
+  /* ---------- Generic prefix field (RM, +60, etc.) ---------- */
+  
+  .prefix-row {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .prefix-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+    min-width: 50px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 15px;
+    color: var(--text);
+    background: var(--bg);
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  
+  .prefix-box.invalid {
+    border-color: var(--error);
+    color: var(--error);
+  }
+  
+  .prefix-input-box {
+    position: relative;
+    flex: 1;
+  }
+  
+  .prefix-input-box input {
+    width: 100%;
+    padding: 18px 14px 8px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    background: transparent;
+    transition: border-color 0.15s ease;
+  }
+  
+  .prefix-input-box input:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+  
+  .prefix-input-box label {
+    position: absolute;
+    left: 14px;
+    top: 16px;
+    font-size: 15px;
+    color: var(--text-muted);
+    pointer-events: none;
+    transition: all 0.15s ease;
+    background: var(--card-bg);
+    padding: 0 4px;
+  }
+  
+  .prefix-input-box input:focus + label,
+  .prefix-input-box input:not(:placeholder-shown) + label {
+    top: -8px;
+    left: 10px;
+    font-size: 12px;
+    color: var(--primary);
+  }
+  
+  .prefix-input-box input.invalid,
+  .prefix-input-box input.invalid:focus {
+    border-color: var(--error);
+  }
+  
+  .prefix-input-box input.invalid + label,
+  .prefix-input-box input.invalid:focus + label,
+  .prefix-input-box input.invalid:not(:placeholder-shown) + label {
+    color: var(--error);
+  }
+  
+  /* ---------- Submit button ---------- */
+  
+  .submit-btn {
+    width: 100%;
+    padding: 13px;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  
+  .submit-btn:hover {
+    background: var(--primary-hover);
+  }
+  
+  /* ---------- Status message (post-jobs.html) ---------- */
+  
+  .status {
+    font-size: 13px;
+    margin-top: 12px;
+    margin-bottom: 0;
+    min-height: 16px;
+  }
+  
+  .status.success {
+    color: var(--success);
+  }
+  
+  .status.error {
+    color: var(--error);
+  }
+  
+  /* ---------- Split layout (employer-dashboard.html) ---------- */
+  
+  .split-page {
+    padding: 32px 40px 100px;
+  }
+  
+  .split-header {
+    max-width: 1200px;
+    margin: 0 auto 24px;
+  }
+  
+  .split-header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0;
+  }
+  
+  .split-container {
+    display: flex;
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+    align-items: flex-start;
+  }
+  
+  .split-left {
+    flex: 0 0 380px;
+    max-height: calc(100vh - 180px);
+    overflow-y: auto;
+  }
+  
+  .split-right {
+    flex: 1;
+    position: sticky;
+    top: 24px;
+  }
+  
+  .section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin: 0 0 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  /* ---------- Compact job cards (left column) ---------- */
+  
+  .jobs-list-compact {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .job-card-compact {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  
+  .job-card-compact:hover {
+    border-color: var(--primary);
+  }
+  
+  .job-card-compact.active {
+    border-color: var(--primary);
+    border-width: 2px;
+    box-shadow: 0 2px 12px rgba(44, 62, 80, 0.1);
+  }
+  
+  .job-card-compact h3 {
+    margin: 0 0 4px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  
+  .job-company {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  
+  .job-meta-compact {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  
+  .job-salary-compact {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--primary);
+  }
+  
+  /* ---------- Detail panel (right column) ---------- */
+  
+  .detail-panel {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    max-height: calc(100vh - 180px);
+    overflow-y: auto;
+  }
+  
+  .detail-header h2 {
+    margin: 0 0 4px;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  
+  .detail-company {
+    font-size: 15px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+  
+  .detail-info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+  
+  .detail-info-item {
+    font-size: 14px;
+    color: var(--text);
+    text-align: left;
+  }
+  
+  .detail-salary {
+    color: var(--text);
+    font-weight: 400;
+  }
+  
+  .detail-posted {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+  }
+  
+  .detail-section {
+    margin-bottom: 24px;
+  }
+  
+  .detail-section h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 10px;
+  }
+  
+  .detail-section p {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.6;
+    margin: 0;
+    white-space: pre-wrap;
+  }
+  
+  /* ---------- Job skills tags ---------- */
+  
+  .job-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  
+  .skill-tag {
+    background: var(--bg);
+    color: var(--text-muted);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+  
+  /* ---------- Empty states ---------- */
+  
+  .empty-state {
+    color: var(--text-muted);
+    font-size: 14px;
+    text-align: center;
+    padding: 40px 0;
+  }
+  
+  /* ---------- Posted time ---------- */
+  
+  .posted-time {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+  
+  /* ---------- Floating Action Button ---------- */
+  
+  .fab {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    width: 56px;
+    height: 56px;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 400;
+    text-decoration: none;
+    box-shadow: 0 4px 16px rgba(44, 62, 80, 0.25);
+    transition: background 0.15s ease, transform 0.15s ease;
+    line-height: 1;
+  }
+  
+  .fab:hover {
+    background: var(--primary-hover);
+    transform: scale(1.05);
+  }
+
+  /* ---------- Edit button (detail panel header) ---------- */
+
+.detail-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .edit-btn {
+    flex-shrink: 0;
+    padding: 6px 16px;
+    border: 1px solid var(--primary);
+    border-radius: 16px;
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+  
+  .edit-btn:hover {
+    background: var(--primary);
+    color: #fff;
+  }
+
+  /* ---------- Status badge ---------- */
+
+.status-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+.status-pending {
+  background: var(--bg);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.status-shortlisted {
+  background: #E8F5E9;
+  color: var(--success);
+}
+
+.status-rejected {
+  background: #FDECEA;
+  color: var(--error);
+}
+
+/* ---------- Shortlist / Reject action buttons ---------- */
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.shortlist-btn,
+.reject-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid;
+  transition: all 0.15s ease;
+}
+
+.shortlist-btn {
+  background: var(--success);
+  color: #fff;
+  border-color: var(--success);
+}
+
+.shortlist-btn:hover {
+  background: #219150;
+}
+
+.reject-btn {
+  background: transparent;
+  color: var(--error);
+  border-color: var(--error);
+}
+
+.reject-btn:hover {
+  background: var(--error);
+  color: #fff;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 32px 0;
+}
+
+.phone-row {
+  display: flex;
+  gap: 8px;
+}
+
+.phone-code-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  min-width: 50px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--bg);
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.phone-code-box.invalid {
+  border-color: var(--error);
+  color: var(--error);
+}
+
+.phone-input-box {
+  position: relative;
+  flex: 1;
+}
+
+.phone-input-box input {
+  width: 100%;
+  padding: 18px 14px 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  color: var(--text);
+  background: transparent;
+  transition: border-color 0.15s ease;
+}
+
+.phone-input-box input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.phone-input-box label {
+  position: absolute;
+  left: 14px;
+  top: 16px;
+  font-size: 15px;
+  color: var(--text-muted);
+  pointer-events: none;
+  transition: all 0.15s ease;
+  background: var(--card-bg);
+  padding: 0 4px;
+}
+
+.phone-input-box input:focus + label,
+.phone-input-box input:not(:placeholder-shown) + label {
+  top: -8px;
+  left: 10px;
+  font-size: 12px;
+  color: var(--primary);
+}
+
+.phone-input-box input.invalid,
+.phone-input-box input.invalid:focus {
+  border-color: var(--error);
+}
+
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding: 18px 14px 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  color: var(--text);
+  background: transparent;
+  transition: border-color 0.15s ease;
+}
+
+.password-wrapper input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.password-wrapper label {
+  position: absolute;
+  left: 14px;
+  top: 16px;
+  font-size: 15px;
+  color: var(--text-muted);
+  pointer-events: none;
+  transition: all 0.15s ease;
+  background: var(--card-bg);
+  padding: 0 4px;
+}
+
+.password-wrapper input:focus + label,
+.password-wrapper input:not(:placeholder-shown) + label {
+  top: -8px;
+  left: 10px;
+  font-size: 12px;
+  color: var(--primary);
+}
+
+.password-wrapper input.invalid,
+.password-wrapper input.invalid:focus {
+  border-color: var(--error);
+}
