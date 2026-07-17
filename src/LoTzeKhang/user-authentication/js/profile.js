@@ -12,7 +12,7 @@ let originalContactDigits = "";
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
-    window.location.href = "../../OeKhyeJin/job-management/login.html";
+    window.location.href = "../user-authentication/login.html";
     return;
   }
 
@@ -45,7 +45,7 @@ onAuthStateChanged(auth, async (user) => {
 document.getElementById("logoutBtn").addEventListener("click", async () => {
   await signOut(auth);
   localStorage.clear();
-  window.location.href = "../../OeKhyeJin/job-management/login.html";
+  window.location.href = "../user-authentication/login.html";
 });
 
 document.getElementById("contactNumber").addEventListener("input", (e) => {
