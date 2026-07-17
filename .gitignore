@@ -6,3 +6,4 @@ coverage.xml
 dist/
 .cache/
 serviceAccountKey.json
+**/uploaded_resumes/
