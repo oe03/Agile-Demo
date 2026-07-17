@@ -12,7 +12,7 @@ let selectedAppId = null;
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
-    window.location.href = "login.html";
+    window.location.href = "../../LoTzeKhang/user-authentication/login.html";
     return;
   }
   await loadApplications();
@@ -21,7 +21,8 @@ onAuthStateChanged(auth, async (user) => {
 
 document.getElementById("logoutBtn").addEventListener("click", async () => {
   await signOut(auth);
-  window.location.href = "login.html";
+  localStorage.clear();
+  window.location.href = "../../LoTzeKhang/user-authentication/login.html";
 });
 
 async function loadApplications() {
@@ -71,11 +72,20 @@ function renderCandidateList() {
 
 function renderCompactCard(app) {
   const isActive = app.id === selectedAppId ? "active" : "";
+  const statusLabel =
+    {
+      pending: "Pending",
+      shortlisted: "Shortlisted",
+      rejected: "Rejected",
+    }[app.status] || "Pending";
+
   return `
     <div class="job-card-compact ${isActive}" data-id="${app.id}">
       <h3>${escapeHtml(app.applicantName)}</h3>
       <div class="job-company">Applied for: ${escapeHtml(app.jobTitle)}</div>
-      <div class="job-meta-compact">${escapeHtml(app.appliedTimeAgo)}</div>
+      <div class="job-meta-compact">${escapeHtml(
+        app.appliedTimeAgo
+      )} · ${statusLabel}</div>
     </div>
   `;
 }
@@ -95,9 +105,19 @@ function selectCandidate(appId) {
 function renderDetailPanel(app) {
   const detailPanel = document.getElementById("detailPanel");
 
+  const statusLabel =
+    {
+      pending: "Pending Review",
+      shortlisted: "Shortlisted",
+      rejected: "Rejected",
+    }[app.status] || "Pending Review";
+
   detailPanel.innerHTML = `
     <div class="detail-header">
-      <h2>${escapeHtml(app.applicantName)}</h2>
+      <div class="detail-header-top">
+        <h2>${escapeHtml(app.applicantName)}</h2>
+        <span class="status-badge status-${app.status}">${statusLabel}</span>
+      </div>
       <div class="detail-company">${escapeHtml(app.applicantEmail)}</div>
     </div>
 
@@ -129,7 +149,42 @@ function renderDetailPanel(app) {
           : `<p>No resume uploaded</p>`
       }
     </div>
+
+    <div class="action-buttons">
+      <button class="shortlist-btn" data-app-id="${app.id}">Shortlist</button>
+      <button class="reject-btn" data-app-id="${app.id}">Reject</button>
+    </div>
   `;
+
+  document.querySelector(".shortlist-btn").addEventListener("click", () => {
+    updateStatus(app.id, "shortlisted");
+  });
+  document.querySelector(".reject-btn").addEventListener("click", () => {
+    updateStatus(app.id, "rejected");
+  });
+}
+
+async function updateStatus(applicationId, newStatus) {
+  try {
+    const idToken = await auth.currentUser.getIdToken();
+    const response = await fetch(
+      `${API_URL}/applications/${applicationId}/status`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({ status: newStatus }),
+      }
+    );
+
+    if (!response.ok) throw new Error("Failed to update status");
+
+    await loadApplications();
+  } catch (error) {
+    console.error("Update status error:", error);
+  }
 }
 
 function escapeHtml(text) {
@@ -137,3 +192,10 @@ function escapeHtml(text) {
   div.textContent = text ?? "";
   return div.innerHTML;
 }
+
+window.addEventListener("pageshow", (event) => {
+  if (event.persisted) {
+    // Page was restored from bfcache — force a full reload to re-check auth state
+    window.location.reload();
+  }
+});
