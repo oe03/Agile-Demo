@@ -1,0 +1,110 @@
+<!-- src/LoTzeKhang/user-authentication/profile.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Account - CariMakan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/profile.css" />
+    <link rel="stylesheet" href="../../shared/logo.css" />
+    <link rel="stylesheet" href="../../shared/account-menu.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a href="#" id="logoLink" class="logo">Cari<span>Makan</span></a>
+      <nav class="topnav">
+        <button id="logoutBtn" class="logout-btn">Log Out</button>
+      </nav>
+    </header>
+
+    <main class="page-content">
+      <div class="form-card">
+        <h1>My Account</h1>
+
+        <form id="profileForm" novalidate>
+          <h2 class="section-label">Personal Details</h2>
+
+          <div class="field floating">
+            <input type="text" id="fullName" placeholder=" " />
+            <label for="fullName">Full name</label>
+            <span class="field-error" id="fullNameError"></span>
+          </div>
+
+          <div class="field floating">
+            <input type="email" id="email" placeholder=" " disabled />
+            <label for="email">Email</label>
+          </div>
+
+          <div class="field">
+            <div class="phone-row">
+              <div class="phone-code-box" id="phoneCodeBox">+60</div>
+              <div class="phone-input-box floating">
+                <input
+                  type="tel"
+                  id="contactNumber"
+                  placeholder=" "
+                  maxlength="10"
+                />
+                <label for="contactNumber">Contact number</label>
+              </div>
+            </div>
+            <span class="field-error" id="contactNumberError"></span>
+          </div>
+
+          <h2 class="section-label">Change Password</h2>
+          <p class="section-hint">
+            Leave blank if you don't want to change your password
+          </p>
+
+          <div class="field floating">
+            <div class="password-wrapper">
+              <input type="password" id="newPassword" placeholder=" " />
+              <label for="newPassword">New password</label>
+              <button
+                type="button"
+                class="toggle-visibility"
+                id="toggleNewPassword"
+              >
+                Show
+              </button>
+            </div>
+            <span class="field-error" id="newPasswordError"></span>
+          </div>
+
+          <div class="field floating">
+            <div class="password-wrapper">
+              <input type="password" id="confirmPassword" placeholder=" " />
+              <label for="confirmPassword">Confirm new password</label>
+              <button
+                type="button"
+                class="toggle-visibility"
+                id="toggleConfirmPassword"
+              >
+                Show
+              </button>
+            </div>
+            <span class="field-error" id="confirmPasswordError"></span>
+          </div>
+
+          <button type="submit" class="submit-btn">Save Changes</button>
+          <p id="statusMsg" class="status"></p>
+        </form>
+      </div>
+    </main>
+
+    <script type="module" src="js/profile.js"></script>
+    <script type="module">
+      import { initLogoNav } from "../../shared/logo-nav.js";
+      initLogoNav();
+    </script>
+    <script type="module">
+      import { initAccountMenu } from "../../shared/account-menu.js";
+      initAccountMenu();
+    </script>
+  </body>
+</html>
