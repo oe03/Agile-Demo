@@ -117,19 +117,21 @@ async def submit_application(
     resume_url = f"http://127.0.0.1:8000/resumes/{unique_filename}"
 
     doc_ref = db.collection("applications").document()
-    doc_ref.set({
-        "jobId": jobId,
-        "jobTitle": job_data.get("title"),
-        "employerId": job_data.get("postedBy"),
-        "applicantId": user["uid"],
-        "applicantName": fullName,
-        "applicantEmail": email,
-        "contactNumber": contactNumber,
-        "coverNote": coverNote,
-        "resumeUrl": resume_url,
-        "status": "pending",
-        "appliedAt": datetime.now(timezone.utc),
-    })
+    doc_ref.set(
+        {
+            "jobId": jobId,
+            "jobTitle": job_data.get("title"),
+            "employerId": job_data.get("postedBy"),
+            "applicantId": user["uid"],
+            "applicantName": fullName,
+            "applicantEmail": email,
+            "contactNumber": contactNumber,
+            "coverNote": coverNote,
+            "resumeUrl": resume_url,
+            "status": "pending",
+            "appliedAt": datetime.now(timezone.utc),
+        }
+    )
 
     return {"id": doc_ref.id, "message": "Application submitted successfully"}
 

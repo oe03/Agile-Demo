@@ -92,21 +92,24 @@ async def submit_application(
     resume_url = f"http://127.0.0.1:8000/resumes/{unique_filename}"
 
     doc_ref = db.collection("applications").document()
-    doc_ref.set({
-        "jobId": jobId,
-        "jobTitle": job_data.get("title"),
-        "employerId": job_data.get("postedBy"),
-        "applicantId": user["uid"],
-        "applicantName": fullName,
-        "applicantEmail": email,
-        "contactNumber": f"+60{contactNumber}",
-        "coverNote": coverNote,
-        "resumeUrl": resume_url,
-        "status": "pending",
-        "appliedAt": datetime.now(timezone.utc),
-    })
+    doc_ref.set(
+        {
+            "jobId": jobId,
+            "jobTitle": job_data.get("title"),
+            "employerId": job_data.get("postedBy"),
+            "applicantId": user["uid"],
+            "applicantName": fullName,
+            "applicantEmail": email,
+            "contactNumber": f"+60{contactNumber}",
+            "coverNote": coverNote,
+            "resumeUrl": resume_url,
+            "status": "pending",
+            "appliedAt": datetime.now(timezone.utc),
+        }
+    )
 
     return {"id": doc_ref.id, "message": "Application submitted successfully"}
+
 
 def time_ago(created_at: datetime) -> str:
     if created_at.tzinfo is None:
@@ -156,8 +159,10 @@ def get_my_applications(user=Depends(verify_token)):
 
     return applications
 
+
 class StatusUpdate(BaseModel):
     status: str  # "shortlisted" or "rejected"
+
 
 @router.put("/applications/{application_id}/status")
 def update_application_status(application_id: str, data: StatusUpdate, user=Depends(verify_token)):
@@ -173,7 +178,9 @@ def update_application_status(application_id: str, data: StatusUpdate, user=Depe
 
     application = doc.to_dict()
     if application.get("employerId") != user["uid"]:
-        raise HTTPException(status_code=403, detail="You can only update applications for your own job postings")
+        raise HTTPException(
+            status_code=403, detail="You can only update applications for your own job postings"
+        )
 
     doc_ref.update({"status": data.status})
     return {"message": f"Application marked as {data.status}"}

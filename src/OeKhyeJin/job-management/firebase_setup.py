@@ -7,6 +7,7 @@ cred = credentials.Certificate("serviceAccountKey.json")
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
+
 # --- Verifies Firebase ID token sent from frontend ---
 def verify_token(authorization: str = Header(...)):
     try:

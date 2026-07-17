@@ -7,6 +7,7 @@ from firebase_setup import db, verify_token
 
 router = APIRouter()
 
+
 class JobValidation(BaseModel):
     companyName: str
     title: str
@@ -15,6 +16,7 @@ class JobValidation(BaseModel):
     location: str
     jobType: str
     skills: str
+
 
 class JobCreate(BaseModel):
     companyName: str
@@ -25,6 +27,7 @@ class JobCreate(BaseModel):
     jobType: str
     skills: str
 
+
 class JobUpdate(BaseModel):
     companyName: str
     title: str
@@ -33,6 +36,7 @@ class JobUpdate(BaseModel):
     location: str
     jobType: str
     skills: str
+
 
 def time_ago(created_at: datetime) -> str:
     if created_at.tzinfo is None:
@@ -62,6 +66,7 @@ def time_ago(created_at: datetime) -> str:
         return f"{diff_days} days ago"
 
     return created_at.strftime("%d %b %Y")
+
 
 @router.post("/validate-job")
 def validate_job(data: JobValidation):
@@ -94,6 +99,7 @@ def validate_job(data: JobValidation):
         return {"valid": False, "errors": errors}
     return {"valid": True, "errors": {}}
 
+
 @router.post("/jobs")
 def create_job(job: JobCreate, user=Depends(verify_token)):
     profile_doc = db.collection("users").document(user["uid"]).get()
@@ -107,19 +113,22 @@ def create_job(job: JobCreate, user=Depends(verify_token)):
     skills_list = [s.strip() for s in job.skills.split(",") if s.strip()]
 
     doc_ref = db.collection("jobs").document()
-    doc_ref.set({
-        "companyName": job.companyName,
-        "title": job.title,
-        "description": job.description,
-        "salary": job.salary,
-        "location": job.location,
-        "jobType": job.jobType,
-        "skills": skills_list,
-        "postedBy": user["uid"],
-        "employerName": profile.get("fullName"),
-        "createdAt": datetime.now(timezone.utc)
-    })
+    doc_ref.set(
+        {
+            "companyName": job.companyName,
+            "title": job.title,
+            "description": job.description,
+            "salary": job.salary,
+            "location": job.location,
+            "jobType": job.jobType,
+            "skills": skills_list,
+            "postedBy": user["uid"],
+            "employerName": profile.get("fullName"),
+            "createdAt": datetime.now(timezone.utc),
+        }
+    )
     return {"id": doc_ref.id, "message": "Job posted successfully"}
+
 
 @router.get("/jobs")
 def get_jobs():
@@ -130,6 +139,7 @@ def get_jobs():
         data["postedTimeAgo"] = time_ago(data["createdAt"])
         jobs.append({"id": doc.id, **data})
     return jobs
+
 
 @router.get("/jobs/mine")
 def get_my_jobs(user=Depends(verify_token)):
@@ -146,6 +156,7 @@ def get_my_jobs(user=Depends(verify_token)):
         jobs.append({"id": doc.id, **data})
     return jobs
 
+
 @router.get("/jobs/{job_id}")
 def get_job(job_id: str, user=Depends(verify_token)):
     doc = db.collection("jobs").document(job_id).get()
@@ -157,6 +168,7 @@ def get_job(job_id: str, user=Depends(verify_token)):
         raise HTTPException(status_code=403, detail="You can only view your own job postings")
 
     return {"id": doc.id, **data}
+
 
 @router.put("/jobs/{job_id}")
 def update_job(job_id: str, job: JobUpdate, user=Depends(verify_token)):
@@ -172,13 +184,15 @@ def update_job(job_id: str, job: JobUpdate, user=Depends(verify_token)):
 
     skills_list = [s.strip() for s in job.skills.split(",") if s.strip()]
 
-    doc_ref.update({
-        "companyName": job.companyName,
-        "title": job.title,
-        "description": job.description,
-        "salary": job.salary,
-        "location": job.location,
-        "jobType": job.jobType,
-        "skills": skills_list,
-    })
+    doc_ref.update(
+        {
+            "companyName": job.companyName,
+            "title": job.title,
+            "description": job.description,
+            "salary": job.salary,
+            "location": job.location,
+            "jobType": job.jobType,
+            "skills": skills_list,
+        }
+    )
     return {"id": job_id, "message": "Job updated successfully"}
