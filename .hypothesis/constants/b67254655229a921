@@ -1,0 +1,4 @@
+# file: /Users/oe/Documents/Agile-Demo/src/OeKhyeJin/job-management/jobs.py
+# hypothesis_version: 6.156.1
+
+[403, 404, '%d %b %Y', ',', '/jobs', '/jobs/mine', '/jobs/{job_id}', '/validate-job', '==', 'DESCENDING', 'Job not found', 'Yesterday', 'companyName', 'createdAt', 'description', 'employer', 'employerName', 'errors', 'fullName', 'id', 'jobType', 'jobs', 'location', 'message', 'postedBy', 'postedTimeAgo', 'role', 'salary', 'skills', 'title', 'uid', 'users', 'valid']

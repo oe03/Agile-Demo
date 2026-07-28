@@ -1,5 +1,5 @@
-import sys
 import os
+import sys
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,9 +12,9 @@ sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(__file__), "../../LoTzeKhang/user-authentication"))
 )
 
-from loginsignup import router as loginsignup_router
-from jobs import router as jobs_router
 from applicant import router as applications_router
+from jobs import router as jobs_router
+from loginsignup import router as loginsignup_router
 
 app = FastAPI(title="Job Portal API")
 

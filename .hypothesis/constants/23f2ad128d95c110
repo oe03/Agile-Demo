@@ -1,0 +1,4 @@
+# file: /Users/oe/Documents/Agile-Demo/conftest.py
+# hypothesis_version: 6.156.1
+
+['firebase_admin', 'firebase_admin.auth', 'src']
