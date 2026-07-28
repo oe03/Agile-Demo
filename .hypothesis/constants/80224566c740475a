@@ -1,0 +1,4 @@
+# file: /Users/oe/Documents/Agile-Demo/src/LoTzeKhang/user-authentication/loginsignup.py
+# hypothesis_version: 6.156.1
+
+[404, '/users', '/users/me', '/validate-login', '/validate-profile', '/validate-signup', 'Profile created', '^[0-9]{9,10}$', 'contactNumber', 'createdAt', 'email', 'errors', 'fullName', 'message', 'password', 'role', 'uid', 'users', 'valid']

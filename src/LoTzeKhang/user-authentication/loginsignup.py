@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
-from datetime import datetime
 import re
+from datetime import UTC, datetime
 
+from fastapi import APIRouter, Depends, HTTPException
 from firebase_setup import db, verify_token
+from pydantic import BaseModel
 
 router = APIRouter()
 
@@ -93,7 +93,7 @@ def create_user_profile(profile: UserProfile, user=Depends(verify_token)):
             "email": user.get("email"),
             "contactNumber": profile.contactNumber,
             "role": profile.role,
-            "createdAt": datetime.utcnow(),
+            "createdAt": datetime.now(UTC),
         }
     )
     return {"message": "Profile created", "role": profile.role}

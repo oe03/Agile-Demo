@@ -1,9 +1,9 @@
 # src/OeKhyeJin/job-management/jobs.py
-from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
+from fastapi import APIRouter, Depends, HTTPException
 from firebase_setup import db, verify_token
+from pydantic import BaseModel
 
 router = APIRouter()
 
@@ -40,13 +40,12 @@ class JobUpdate(BaseModel):
 
 def time_ago(created_at: datetime) -> str:
     if created_at.tzinfo is None:
-        created_at = created_at.replace(tzinfo=timezone.utc)
+        created_at = created_at.replace(tzinfo=UTC)
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     diff_seconds = int((now - created_at).total_seconds())
 
-    if diff_seconds < 0:
-        diff_seconds = 0
+    diff_seconds = max(diff_seconds, 0)
 
     if diff_seconds < 60:
         return f"{diff_seconds}s ago"
@@ -124,7 +123,7 @@ def create_job(job: JobCreate, user=Depends(verify_token)):
             "skills": skills_list,
             "postedBy": user["uid"],
             "employerName": profile.get("fullName"),
-            "createdAt": datetime.now(timezone.utc),
+            "createdAt": datetime.now(UTC),
         }
     )
     return {"id": doc_ref.id, "message": "Job posted successfully"}
