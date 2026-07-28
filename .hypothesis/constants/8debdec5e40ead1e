@@ -1,0 +1,4 @@
+# file: /Users/oe/Documents/Agile-Demo/src/OeKhyeJin/job-management/applicant.py
+# hypothesis_version: 6.156.1
+
+[400, 403, 404, 422, '%d %b %Y', '/applications', '/applications/mine', '==', 'DESCENDING', 'Invalid status value', 'Job not found', 'Yesterday', '^[0-9]{9,10}$', 'applicantEmail', 'applicantId', 'applicantName', 'application/pdf', 'applications', 'appliedAt', 'appliedTimeAgo', 'contactNumber', 'coverNote', 'email', 'employer', 'employerId', 'errors', 'fullName', 'id', 'jobId', 'jobTitle', 'jobs', 'message', 'pending', 'postedBy', 'rejected', 'resumeFile', 'resumeUrl', 'role', 'shortlisted', 'status', 'title', 'uid', 'uploaded_resumes', 'users', 'valid', 'wb']
