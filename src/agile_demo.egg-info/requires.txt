@@ -11,3 +11,4 @@ black
 mypy
 fastapi[testclient]
 httpx
+python-multipart

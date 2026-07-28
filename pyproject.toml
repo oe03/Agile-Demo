@@ -29,6 +29,7 @@ dev = [
   "mypy",
   "fastapi[testclient]",
   "httpx",
+  "python-multipart",
 ]
 
 [tool.ruff]
