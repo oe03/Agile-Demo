@@ -1,9 +1,10 @@
 # src/OeKhyeJin/job-management/jobs.py
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
-from firebase_setup import db, verify_token
 from pydantic import BaseModel
+
+from firebase_setup import db, verify_token
 
 router = APIRouter()
 
@@ -38,14 +39,19 @@ class JobUpdate(BaseModel):
     skills: str
 
 
+class JobStatusUpdate(BaseModel):
+    status: str  # "open" or "closed"
+
+
 def time_ago(created_at: datetime) -> str:
     if created_at.tzinfo is None:
-        created_at = created_at.replace(tzinfo=UTC)
+        created_at = created_at.replace(tzinfo=timezone.utc)
 
-    now = datetime.now(UTC)
+    now = datetime.now(timezone.utc)
     diff_seconds = int((now - created_at).total_seconds())
 
-    diff_seconds = max(diff_seconds, 0)
+    if diff_seconds < 0:
+        diff_seconds = 0
 
     if diff_seconds < 60:
         return f"{diff_seconds}s ago"
@@ -123,7 +129,8 @@ def create_job(job: JobCreate, user=Depends(verify_token)):
             "skills": skills_list,
             "postedBy": user["uid"],
             "employerName": profile.get("fullName"),
-            "createdAt": datetime.now(UTC),
+            "status": "open",
+            "createdAt": datetime.now(timezone.utc),
         }
     )
     return {"id": doc_ref.id, "message": "Job posted successfully"}
@@ -136,6 +143,7 @@ def get_jobs():
     for doc in jobs_ref:
         data = doc.to_dict()
         data["postedTimeAgo"] = time_ago(data["createdAt"])
+        data.setdefault("status", "open")
         jobs.append({"id": doc.id, **data})
     return jobs
 
@@ -152,6 +160,7 @@ def get_my_jobs(user=Depends(verify_token)):
     for doc in jobs_ref:
         data = doc.to_dict()
         data["postedTimeAgo"] = time_ago(data["createdAt"])
+        data.setdefault("status", "open")
         jobs.append({"id": doc.id, **data})
     return jobs
 
@@ -166,6 +175,7 @@ def get_job(job_id: str, user=Depends(verify_token)):
     if data.get("postedBy") != user["uid"]:
         raise HTTPException(status_code=403, detail="You can only view your own job postings")
 
+    data.setdefault("status", "open")
     return {"id": doc.id, **data}
 
 
@@ -195,3 +205,22 @@ def update_job(job_id: str, job: JobUpdate, user=Depends(verify_token)):
         }
     )
     return {"id": job_id, "message": "Job updated successfully"}
+
+
+@router.put("/jobs/{job_id}/status")
+def update_job_status(job_id: str, data: JobStatusUpdate, user=Depends(verify_token)):
+    if data.status not in ["open", "closed"]:
+        raise HTTPException(status_code=400, detail="Invalid status value")
+
+    doc_ref = db.collection("jobs").document(job_id)
+    doc = doc_ref.get()
+
+    if not doc.exists:
+        raise HTTPException(status_code=404, detail="Job not found")
+
+    existing = doc.to_dict()
+    if existing.get("postedBy") != user["uid"]:
+        raise HTTPException(status_code=403, detail="You can only update your own job postings")
+
+    doc_ref.update({"status": data.status})
+    return {"id": job_id, "message": f"Job marked as {data.status}"}

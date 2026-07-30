@@ -1,0 +1,88 @@
+<!-- src/OeKhyeJin/job-management/company-profile.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Company Profile - CariMakan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="../../shared/logo.css" />
+    <link rel="stylesheet" href="../../shared/account-menu.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a href="#" id="logoLink" class="logo">Cari<span>Makan</span></a>
+      <nav class="topnav">
+        <a href="employer-dashboard.html">Dashboard</a>
+        <a href="candidates.html">View Applied Candidates</a>
+        <a href="company-profile.html" class="active">Company Profile</a>
+
+        <div class="account-menu">
+          <button id="accountMenuBtn" class="account-menu-trigger">
+            Account ▾
+          </button>
+          <div class="account-dropdown" id="accountDropdown">
+            <a href="../../LoTzeKhang/user-authentication/profile.html"
+              >My Account</a
+            >
+            <button id="logoutBtn">Log Out</button>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="page-content">
+      <div class="form-card">
+        <h1>Company Profile</h1>
+        <p class="section-hint">
+          This information will be visible to job seekers viewing your job
+          postings.
+        </p>
+
+        <form id="companyProfileForm" novalidate>
+          <div class="field floating">
+            <textarea
+              id="companyDescription"
+              placeholder=" "
+              rows="5"
+            ></textarea>
+            <label for="companyDescription">Company Information</label>
+            <span class="field-error" id="companyDescriptionError"></span>
+          </div>
+
+          <div class="field floating">
+            <input type="text" id="companyLocation" placeholder=" " />
+            <label for="companyLocation">Company Location</label>
+            <span class="field-error" id="companyLocationError"></span>
+          </div>
+
+          <div class="field floating">
+            <input type="text" id="companyContact" placeholder=" " />
+            <label for="companyContact"
+              >Contact Information (email/phone)</label
+            >
+            <span class="field-error" id="companyContactError"></span>
+          </div>
+
+          <button type="submit" class="submit-btn">Save Changes</button>
+          <p id="statusMsg" class="status"></p>
+        </form>
+      </div>
+    </main>
+
+    <script type="module" src="js/company-profile.js"></script>
+    <script type="module">
+      import { initLogoNav } from "../../shared/logo-nav.js";
+      initLogoNav();
+    </script>
+    <script type="module">
+      import { initAccountMenu } from "../../shared/account-menu.js";
+      initAccountMenu();
+    </script>
+  </body>
+</html>

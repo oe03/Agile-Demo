@@ -75,11 +75,16 @@ function renderJobList() {
 
 function renderCompactCard(job) {
   const isActive = job.id === selectedJobId ? "active" : "";
+  const status = job.status || "open";
+  const statusLabel = status === "closed" ? "Closed" : "Open";
+
   return `
     <div class="job-card-compact ${isActive}" data-id="${job.id}">
       <h3>${escapeHtml(job.title)}</h3>
       <div class="job-company">${escapeHtml(job.companyName)}</div>
-      <div class="job-meta-compact">${escapeHtml(job.location)}</div>
+      <div class="job-meta-compact">${escapeHtml(
+        job.location
+      )} · ${statusLabel}</div>
       <div class="job-salary-compact">${escapeHtml(job.salary)}</div>
       <div class="posted-time">${escapeHtml(job.postedTimeAgo)}</div>
     </div>
@@ -104,40 +109,78 @@ function renderDetailPanel(job) {
     .map((skill) => `<span class="skill-tag">${escapeHtml(skill)}</span>`)
     .join("");
   const jobTypeLabel = JOB_TYPE_LABELS[job.jobType] || job.jobType || "";
+  const status = job.status || "open";
+  const statusLabel = status === "closed" ? "Closed" : "Open";
+  const toggleLabel = status === "closed" ? "Reopen Job" : "Close Job";
 
   detailPanel.innerHTML = `
-      <div class="detail-header">
-        <div class="detail-header-top">
-          <h2>${escapeHtml(job.title)}</h2>
-          <a href="post-jobs.html?jobId=${escapeHtml(
-            job.id
-          )}" class="edit-btn">Edit</a>
-        </div>
-        <div class="detail-company">${escapeHtml(job.companyName)}</div>
+    <div class="detail-header">
+      <div class="detail-header-top">
+        <h2>${escapeHtml(job.title)}</h2>
+        <span class="status-badge status-${status}">${statusLabel}</span>
       </div>
-  
-      <div class="detail-info-list">
-        <div class="detail-info-item">${escapeHtml(job.location)}</div>
-        <div class="detail-info-item">${escapeHtml(jobTypeLabel)}</div>
-        <div class="detail-info-item detail-salary">${escapeHtml(
-          job.salary
-        )} per month</div>
-      </div>
-  
-      <div class="detail-posted posted-time">${escapeHtml(
-        job.postedTimeAgo
-      )}</div>
-  
-      <div class="detail-section">
-        <h3>Job Description</h3>
-        <p>${escapeHtml(job.description)}</p>
-      </div>
-  
-      <div class="detail-section">
-        <h3>Required Skills</h3>
-        <div class="job-skills">${skillsHtml}</div>
-      </div>
-    `;
+      <div class="detail-company">${escapeHtml(job.companyName)}</div>
+    </div>
+
+    <div class="detail-info-list">
+      <div class="detail-info-item">${escapeHtml(job.location)}</div>
+      <div class="detail-info-item">${escapeHtml(jobTypeLabel)}</div>
+      <div class="detail-info-item detail-salary">${escapeHtml(
+        job.salary
+      )} per month</div>
+    </div>
+
+    <div class="detail-posted posted-time">${escapeHtml(
+      job.postedTimeAgo
+    )}</div>
+
+    <div class="detail-section">
+      <h3>Job Description</h3>
+      <p>${escapeHtml(job.description)}</p>
+    </div>
+
+    <div class="detail-section">
+      <h3>Required Skills</h3>
+      <div class="job-skills">${skillsHtml}</div>
+    </div>
+
+    <div class="action-buttons">
+      <button class="toggle-status-btn" data-job-id="${
+        job.id
+      }" data-current-status="${status}">
+        ${toggleLabel}
+      </button>
+    </div>
+  `;
+
+  document
+    .querySelector(".toggle-status-btn")
+    .addEventListener("click", (e) => {
+      const jobId = e.target.getAttribute("data-job-id");
+      const currentStatus = e.target.getAttribute("data-current-status");
+      const newStatus = currentStatus === "closed" ? "open" : "closed";
+      toggleJobStatus(jobId, newStatus);
+    });
+}
+
+async function toggleJobStatus(jobId, newStatus) {
+  try {
+    const idToken = await auth.currentUser.getIdToken();
+    const response = await fetch(`${API_URL}/jobs/${jobId}/status`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${idToken}`,
+      },
+      body: JSON.stringify({ status: newStatus }),
+    });
+
+    if (!response.ok) throw new Error("Failed to update job status");
+
+    await loadMyJobs();
+  } catch (error) {
+    console.error("Toggle job status error:", error);
+  }
 }
 
 function escapeHtml(text) {

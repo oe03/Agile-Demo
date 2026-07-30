@@ -1,0 +1,4 @@
+# file: /Users/oe/Documents/Agile-Demo/src/MahJinnHuei/job-recruitment/favourites.py
+# hypothesis_version: 6.156.1
+
+[404, '/favourites', '/favourites/mine', '/favourites/{job_id}', '==', 'DESCENDING', 'Favourite not found', 'Job not found', 'companyName', 'favourites', 'id', 'isFavourited', 'jobId', 'jobTitle', 'jobs', 'location', 'message', 'salary', 'savedAt', 'title', 'uid', 'userId']

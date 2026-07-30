@@ -34,6 +34,11 @@ onAuthStateChanged(auth, async (user) => {
     document.getElementById("fullName").value = originalFullName;
     document.getElementById("contactNumber").value = originalContactDigits;
 
+    if (profile.role === "jobseeker") {
+      const link = document.getElementById("professionalProfileLink");
+      if (link) link.style.display = "inline";
+    }
+
     document
       .querySelectorAll("input")
       .forEach((el) => el.dispatchEvent(new Event("input")));
