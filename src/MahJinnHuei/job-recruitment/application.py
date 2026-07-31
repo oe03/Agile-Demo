@@ -1,12 +1,13 @@
 # src/OeKhyeJin/job-management/applicant.py
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
-from pydantic import BaseModel
-from datetime import datetime, timezone
-import re
 import os
+import re
 import uuid
+from datetime import UTC, datetime
 
+import anyio
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from firebase_setup import db, verify_token
+from pydantic import BaseModel
 
 router = APIRouter()
 
@@ -19,11 +20,10 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 def time_ago(created_at: datetime) -> str:
     if created_at.tzinfo is None:
-        created_at = created_at.replace(tzinfo=timezone.utc)
-    now = datetime.now(timezone.utc)
+        created_at = created_at.replace(tzinfo=UTC)
+    now = datetime.now(UTC)
     diff_seconds = int((now - created_at).total_seconds())
-    if diff_seconds < 0:
-        diff_seconds = 0
+    diff_seconds = max(diff_seconds, 0)
     if diff_seconds < 60:
         return f"{diff_seconds}s ago"
     diff_minutes = diff_seconds // 60
@@ -106,30 +106,32 @@ async def submit_application(
         raise HTTPException(status_code=404, detail="Job not found")
     job_data = job_doc.to_dict()
 
-    file_ext = os.path.splitext(resume.filename)[1]
+    file_ext = os.path.splitext(resume.filename or "")[1]
     unique_filename = f"{uuid.uuid4()}{file_ext}"
     file_path = os.path.join(UPLOAD_DIR, unique_filename)
 
     contents = await resume.read()
-    with open(file_path, "wb") as f:
-        f.write(contents)
+    async with await anyio.open_file(file_path, "wb") as f:
+        await f.write(contents)
 
     resume_url = f"http://127.0.0.1:8000/resumes/{unique_filename}"
 
     doc_ref = db.collection("applications").document()
-    doc_ref.set({
-        "jobId": jobId,
-        "jobTitle": job_data.get("title"),
-        "employerId": job_data.get("postedBy"),
-        "applicantId": user["uid"],
-        "applicantName": fullName,
-        "applicantEmail": email,
-        "contactNumber": contactNumber,
-        "coverNote": coverNote,
-        "resumeUrl": resume_url,
-        "status": "pending",
-        "appliedAt": datetime.now(timezone.utc),
-    })
+    doc_ref.set(
+        {
+            "jobId": jobId,
+            "jobTitle": job_data.get("title"),
+            "employerId": job_data.get("postedBy"),
+            "applicantId": user["uid"],
+            "applicantName": fullName,
+            "applicantEmail": email,
+            "contactNumber": contactNumber,
+            "coverNote": coverNote,
+            "resumeUrl": resume_url,
+            "status": "pending",
+            "appliedAt": datetime.now(UTC),
+        }
+    )
 
     return {"id": doc_ref.id, "message": "Application submitted successfully"}
 

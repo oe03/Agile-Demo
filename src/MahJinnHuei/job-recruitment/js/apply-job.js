@@ -13,16 +13,66 @@ const companyName = urlParams.get("company") || "";
 
 document.getElementById("jobSubtitle").textContent = companyName;
 
-onAuthStateChanged(auth, (user) => {
+let hasExistingResume = false;
+let existingResumeFilename = "";
+
+onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = "../../LoTzeKhang/user-authentication/login.html";
+    return;
+  }
+
+  try {
+    const idToken = await user.getIdToken();
+    const response = await fetch(`${API_URL}/jobseeker-profile/resume-info`, {
+      headers: { Authorization: `Bearer ${idToken}` },
+    });
+    if (response.ok) {
+      const data = await response.json();
+      hasExistingResume = data.hasResume;
+      existingResumeFilename = data.resumeFilename;
+
+      if (hasExistingResume) {
+        showResumeReuseOption();
+      }
+    }
+  } catch (error) {
+    console.error("Check existing resume error:", error);
   }
 });
 
+function showResumeReuseOption() {
+  const uploadBox = document.getElementById("uploadBox");
+  const reuseBanner = document.createElement("div");
+  reuseBanner.className = "reuse-resume-banner";
+  reuseBanner.innerHTML = `
+    <p>You have a saved resume: <strong>${escapeHtml(
+      existingResumeFilename
+    )}</strong></p>
+    <button type="button" id="useExistingResumeBtn" class="use-existing-btn">Use this resume</button>
+  `;
+  uploadBox.parentElement.insertBefore(reuseBanner, uploadBox);
+
+  document
+    .getElementById("useExistingResumeBtn")
+    .addEventListener("click", () => {
+      document.getElementById("uploadText").textContent =
+        existingResumeFilename;
+      document.getElementById("uploadBox").classList.add("has-file");
+      document.getElementById("uploadBox").dataset.useExisting = "true";
+      reuseBanner.remove();
+    });
+}
+
 document.getElementById("logoutBtn").addEventListener("click", async () => {
   await signOut(auth);
-  localStorage.clear();
   window.location.href = "../../LoTzeKhang/user-authentication/login.html";
+});
+
+window.addEventListener("pageshow", (event) => {
+  if (event.persisted) {
+    window.location.reload();
+  }
 });
 
 document.getElementById("contactNumber").addEventListener("input", (e) => {
@@ -47,6 +97,7 @@ const uploadText = document.getElementById("uploadText");
 resumeInput.addEventListener("change", () => {
   document.getElementById("resumeFileError").textContent = "";
   uploadBox.classList.remove("invalid");
+  uploadBox.dataset.useExisting = "false";
 
   const file = resumeInput.files[0];
   if (!file) return;
@@ -111,11 +162,13 @@ document.getElementById("applyForm").addEventListener("submit", async (e) => {
   const contactNumberDigits = document.getElementById("contactNumber").value;
   const coverNote = document.getElementById("coverNote").value;
   const resumeFile = resumeInput.files[0];
+  const usingExisting =
+    document.getElementById("uploadBox").dataset.useExisting === "true";
   const statusMsg = document.getElementById("statusMsg");
   statusMsg.textContent = "";
   statusMsg.className = "status";
 
-  if (!resumeFile) {
+  if (!resumeFile && !usingExisting) {
     document.getElementById("resumeFileError").textContent =
       "Please upload your resume";
     uploadBox.classList.add("invalid");
@@ -133,7 +186,7 @@ document.getElementById("applyForm").addEventListener("submit", async (e) => {
     });
     const validation = await validateRes.json();
 
-    if (!validation.valid || !resumeFile) {
+    if (!validation.valid || (!resumeFile && !usingExisting)) {
       showFieldErrors(validation.errors || {});
       return;
     }
@@ -143,9 +196,14 @@ document.getElementById("applyForm").addEventListener("submit", async (e) => {
     formData.append("jobId", jobId);
     formData.append("fullName", fullName);
     formData.append("email", email);
-    formData.append("contactNumber", contactNumberDigits);
+    formData.append("contactNumber", `+60${contactNumberDigits}`);
     formData.append("coverNote", coverNote);
-    formData.append("resume", resumeFile);
+
+    if (usingExisting) {
+      formData.append("useExistingResume", "true");
+    } else {
+      formData.append("resume", resumeFile);
+    }
 
     const response = await fetch(`${API_URL}/applications`, {
       method: "POST",
@@ -174,9 +232,8 @@ document.getElementById("applyForm").addEventListener("submit", async (e) => {
   }
 });
 
-window.addEventListener("pageshow", (event) => {
-  if (event.persisted) {
-    // Page was restored from bfcache — force a full reload to re-check auth state
-    window.location.reload();
-  }
-});
+function escapeHtml(text) {
+  const div = document.createElement("div");
+  div.textContent = text ?? "";
+  return div.innerHTML;
+}
