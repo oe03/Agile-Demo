@@ -18,6 +18,7 @@
       <a href="#" id="logoLink" class="logo">Cari<span>Makan</span></a>
       <nav class="topnav">
         <a href="employer-dashboard.html">Dashboard</a>
+        <a href="company-profile.html">Company Profile</a>
         <a href="candidates.html" class="active">View Applied Candidates</a>
 
         <div class="account-menu">
@@ -56,6 +57,41 @@
         </div>
       </div>
     </main>
+
+    <!-- Interview scheduling modal goes here, after </main>, before scripts -->
+    <div id="interviewModal" class="modal-overlay" style="display: none">
+      <div class="modal-card">
+        <h2>Schedule Interview</h2>
+        <form id="interviewForm" novalidate>
+          <div class="field floating">
+            <input type="date" id="interviewDate" placeholder=" " />
+            <label for="interviewDate">Interview Date</label>
+            <span class="field-error" id="interviewDateError"></span>
+          </div>
+
+          <div class="field floating">
+            <input type="time" id="interviewTime" placeholder=" " />
+            <label for="interviewTime">Interview Time</label>
+            <span class="field-error" id="interviewTimeError"></span>
+          </div>
+
+          <div class="field floating">
+            <input type="text" id="interviewLocation" placeholder=" " />
+            <label for="interviewLocation">Interview Location</label>
+            <span class="field-error" id="interviewLocationError"></span>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" id="cancelInterviewBtn" class="cancel-btn">
+              Cancel
+            </button>
+            <button type="submit" class="submit-btn">Confirm Schedule</button>
+          </div>
+
+          <p id="interviewStatusMsg" class="status"></p>
+        </form>
+      </div>
+    </div>
 
     <script type="module" src="js/candidates.js"></script>
     <script type="module">

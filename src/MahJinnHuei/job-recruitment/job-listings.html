@@ -22,6 +22,7 @@
             Account ▾
           </button>
           <div class="account-dropdown" id="accountDropdown">
+            <a href="favourites.html">Saved Jobs</a>
             <a href="../../LoTzeKhang/user-authentication/profile.html"
               >My Account</a
             >
@@ -39,6 +40,13 @@
       <div class="split-container">
         <div class="split-left">
           <h2 class="section-title">All Jobs</h2>
+          <div class="search-box">
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Search by job title, company, or location..."
+            />
+          </div>
           <div id="jobsList" class="jobs-list-compact">
             <p class="empty-state">Loading jobs...</p>
           </div>

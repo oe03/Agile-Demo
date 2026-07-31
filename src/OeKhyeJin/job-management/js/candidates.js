@@ -1,3 +1,4 @@
+// src/OeKhyeJin/job-management/js/candidates.js
 import { auth } from "../../../shared/firebase-config.js";
 import {
   onAuthStateChanged,
@@ -7,8 +8,16 @@ import {
 const API_URL = "http://127.0.0.1:8000";
 const REFRESH_INTERVAL_MS = 5000;
 
+const STATUS_LABELS = {
+  pending: "Pending Review",
+  shortlisted: "Shortlisted",
+  rejected: "Rejected",
+  interview_scheduled: "Interview Scheduled",
+};
+
 let applicationsData = [];
 let selectedAppId = null;
+let currentAppId = null;
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
@@ -21,8 +30,13 @@ onAuthStateChanged(auth, async (user) => {
 
 document.getElementById("logoutBtn").addEventListener("click", async () => {
   await signOut(auth);
-  localStorage.clear();
   window.location.href = "../../LoTzeKhang/user-authentication/login.html";
+});
+
+window.addEventListener("pageshow", (event) => {
+  if (event.persisted) {
+    window.location.reload();
+  }
 });
 
 async function loadApplications() {
@@ -72,12 +86,7 @@ function renderCandidateList() {
 
 function renderCompactCard(app) {
   const isActive = app.id === selectedAppId ? "active" : "";
-  const statusLabel =
-    {
-      pending: "Pending",
-      shortlisted: "Shortlisted",
-      rejected: "Rejected",
-    }[app.status] || "Pending";
+  const statusLabel = STATUS_LABELS[app.status] || "Pending";
 
   return `
     <div class="job-card-compact ${isActive}" data-id="${app.id}">
@@ -104,13 +113,25 @@ function selectCandidate(appId) {
 
 function renderDetailPanel(app) {
   const detailPanel = document.getElementById("detailPanel");
+  const statusLabel = STATUS_LABELS[app.status] || "Pending Review";
 
-  const statusLabel =
-    {
-      pending: "Pending Review",
-      shortlisted: "Shortlisted",
-      rejected: "Rejected",
-    }[app.status] || "Pending Review";
+  const interviewInfoHtml =
+    app.status === "interview_scheduled"
+      ? `
+    <div class="detail-section">
+      <h3>Interview Details</h3>
+      <p>${escapeHtml(app.interviewDate)} at ${escapeHtml(
+          app.interviewTime
+        )}</p>
+      <p>${escapeHtml(app.interviewLocation)}</p>
+    </div>
+  `
+      : "";
+
+  const scheduleButtonHtml =
+    app.status === "shortlisted"
+      ? `<button class="schedule-btn" data-app-id="${app.id}">Schedule Interview</button>`
+      : "";
 
   detailPanel.innerHTML = `
     <div class="detail-header">
@@ -150,10 +171,14 @@ function renderDetailPanel(app) {
       }
     </div>
 
+    ${interviewInfoHtml}
+
     <div class="action-buttons">
       <button class="shortlist-btn" data-app-id="${app.id}">Shortlist</button>
       <button class="reject-btn" data-app-id="${app.id}">Reject</button>
     </div>
+
+    ${scheduleButtonHtml}
   `;
 
   document.querySelector(".shortlist-btn").addEventListener("click", () => {
@@ -162,6 +187,13 @@ function renderDetailPanel(app) {
   document.querySelector(".reject-btn").addEventListener("click", () => {
     updateStatus(app.id, "rejected");
   });
+
+  const scheduleBtn = document.querySelector(".schedule-btn");
+  if (scheduleBtn) {
+    scheduleBtn.addEventListener("click", () => {
+      openInterviewModal(app.id);
+    });
+  }
 }
 
 async function updateStatus(applicationId, newStatus) {
@@ -187,15 +219,109 @@ async function updateStatus(applicationId, newStatus) {
   }
 }
 
+function openInterviewModal(appId) {
+  currentAppId = appId;
+  document.getElementById("interviewModal").style.display = "flex";
+  document.getElementById("interviewForm").reset();
+  document.getElementById("interviewStatusMsg").textContent = "";
+  ["interviewDate", "interviewTime", "interviewLocation"].forEach((id) => {
+    document.getElementById(`${id}Error`).textContent = "";
+    document.getElementById(id).classList.remove("invalid");
+  });
+}
+
+function closeInterviewModal() {
+  document.getElementById("interviewModal").style.display = "none";
+  currentAppId = null;
+}
+
+document
+  .getElementById("cancelInterviewBtn")
+  .addEventListener("click", closeInterviewModal);
+
+document
+  .getElementById("interviewForm")
+  .addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const interviewDate = document.getElementById("interviewDate").value;
+    const interviewTime = document.getElementById("interviewTime").value;
+    const interviewLocation =
+      document.getElementById("interviewLocation").value;
+    const statusMsg = document.getElementById("interviewStatusMsg");
+    statusMsg.textContent = "";
+    statusMsg.className = "status";
+
+    let hasError = false;
+    ["interviewDate", "interviewTime", "interviewLocation"].forEach((id) => {
+      document.getElementById(`${id}Error`).textContent = "";
+      document.getElementById(id).classList.remove("invalid");
+    });
+
+    if (!interviewDate) {
+      document.getElementById("interviewDateError").textContent =
+        "This field is required";
+      document.getElementById("interviewDate").classList.add("invalid");
+      hasError = true;
+    }
+    if (!interviewTime) {
+      document.getElementById("interviewTimeError").textContent =
+        "This field is required";
+      document.getElementById("interviewTime").classList.add("invalid");
+      hasError = true;
+    }
+    if (!interviewLocation.trim()) {
+      document.getElementById("interviewLocationError").textContent =
+        "This field is required";
+      document.getElementById("interviewLocation").classList.add("invalid");
+      hasError = true;
+    }
+
+    if (hasError) return;
+
+    try {
+      const idToken = await auth.currentUser.getIdToken();
+      const response = await fetch(
+        `${API_URL}/applications/${currentAppId}/schedule-interview`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${idToken}`,
+          },
+          body: JSON.stringify({
+            interviewDate,
+            interviewTime,
+            interviewLocation,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(
+          err.detail?.errors
+            ? "Please check the form"
+            : err.detail || "Failed to schedule interview"
+        );
+      }
+
+      statusMsg.textContent = "Interview scheduled successfully";
+      statusMsg.className = "status success";
+
+      setTimeout(async () => {
+        closeInterviewModal();
+        await loadApplications();
+      }, 1000);
+    } catch (error) {
+      statusMsg.textContent = error.message;
+      statusMsg.className = "status error";
+      console.error("Schedule interview error:", error);
+    }
+  });
+
 function escapeHtml(text) {
   const div = document.createElement("div");
   div.textContent = text ?? "";
   return div.innerHTML;
 }
-
-window.addEventListener("pageshow", (event) => {
-  if (event.persisted) {
-    // Page was restored from bfcache — force a full reload to re-check auth state
-    window.location.reload();
-  }
-});

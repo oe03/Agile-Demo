@@ -1,0 +1,4 @@
+# file: /Users/oe/Documents/Agile-Demo/src/OeKhyeJin/job-management/company.py
+# hypothesis_version: 6.156.1
+
+[403, 404, 422, '/company/mine', 'companies', 'companyContact', 'companyDescription', 'companyLocation', 'employer', 'errors', 'message', 'role', 'uid', 'updatedAt', 'users', 'valid']

@@ -1,0 +1,4 @@
+# file: /Users/oe/Documents/Agile-Demo/src/LoTzeKhang/user-authentication/jobseeker_profile.py
+# hypothesis_version: 6.156.1
+
+[422, 'application/pdf', 'education', 'errors', 'hasResume', 'jobSeekerProfiles', 'message', 'profile_resumes', 'resumeFile', 'resumeFilename', 'resumeUrl', 'skills', 'summary', 'uid', 'updatedAt', 'valid', 'wb', 'workExperience']
