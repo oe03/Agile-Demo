@@ -12,7 +12,7 @@ let originalContactDigits = "";
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
-    window.location.href = "../../OeKhyeJin/job-management/login.html";
+    window.location.href = "../user-authentication/login.html";
     return;
   }
 
@@ -34,6 +34,11 @@ onAuthStateChanged(auth, async (user) => {
     document.getElementById("fullName").value = originalFullName;
     document.getElementById("contactNumber").value = originalContactDigits;
 
+    if (profile.role === "jobseeker") {
+      const link = document.getElementById("professionalProfileLink");
+      if (link) link.style.display = "inline";
+    }
+
     document
       .querySelectorAll("input")
       .forEach((el) => el.dispatchEvent(new Event("input")));
@@ -45,7 +50,7 @@ onAuthStateChanged(auth, async (user) => {
 document.getElementById("logoutBtn").addEventListener("click", async () => {
   await signOut(auth);
   localStorage.clear();
-  window.location.href = "../../OeKhyeJin/job-management/login.html";
+  window.location.href = "../user-authentication/login.html";
 });
 
 document.getElementById("contactNumber").addEventListener("input", (e) => {

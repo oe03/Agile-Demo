@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
-from datetime import datetime
 import re
+from datetime import UTC, datetime
 
+from fastapi import APIRouter, Depends, HTTPException
 from firebase_setup import db, verify_token
+from pydantic import BaseModel
 
 router = APIRouter()
 
@@ -11,10 +11,12 @@ router = APIRouter()
 EMAIL_REGEX = r"^[^\s@]+@[^\s@]+\.[^\s@]+$"
 PHONE_REGEX = r"^[0-9]{9,10}$"
 
+
 # --- Data models ---
 class LoginValidation(BaseModel):
     email: str
     password: str
+
 
 class SignupValidation(BaseModel):
     fullName: str
@@ -23,10 +25,12 @@ class SignupValidation(BaseModel):
     password: str
     role: str
 
+
 class UserProfile(BaseModel):
     fullName: str
     contactNumber: str
     role: str  # "jobseeker" or "employer"
+
 
 # --- Login validation ---
 @router.post("/validate-login")
@@ -46,6 +50,7 @@ def validate_login(data: LoginValidation):
     if errors:
         return {"valid": False, "errors": errors}
     return {"valid": True, "errors": {}}
+
 
 # --- Signup validation ---
 @router.post("/validate-signup")
@@ -77,18 +82,22 @@ def validate_signup(data: SignupValidation):
         return {"valid": False, "errors": errors}
     return {"valid": True, "errors": {}}
 
+
 # --- Save user profile (called right after Firebase Auth signup) ---
 @router.post("/users")
 def create_user_profile(profile: UserProfile, user=Depends(verify_token)):
     doc_ref = db.collection("users").document(user["uid"])
-    doc_ref.set({
-        "fullName": profile.fullName,
-        "email": user.get("email"),
-        "contactNumber": profile.contactNumber,
-        "role": profile.role,
-        "createdAt": datetime.utcnow()
-    })
+    doc_ref.set(
+        {
+            "fullName": profile.fullName,
+            "email": user.get("email"),
+            "contactNumber": profile.contactNumber,
+            "role": profile.role,
+            "createdAt": datetime.now(UTC),
+        }
+    )
     return {"message": "Profile created", "role": profile.role}
+
 
 # --- Get current logged-in user's profile (used for role-based redirect) ---
 @router.get("/users/me")
@@ -97,13 +106,17 @@ def get_my_profile(user=Depends(verify_token)):
     if not doc.exists:
         raise HTTPException(status_code=404, detail="User profile not found")
     return doc.to_dict()
+
+
 class ProfileUpdate(BaseModel):
     fullName: str
     contactNumber: str
 
+
 class ProfileValidation(BaseModel):
     fullName: str
     contactNumber: str
+
 
 @router.post("/validate-profile")
 def validate_profile(data: ProfileValidation):
@@ -121,6 +134,7 @@ def validate_profile(data: ProfileValidation):
         return {"valid": False, "errors": errors}
     return {"valid": True, "errors": {}}
 
+
 @router.put("/users/me")
 def update_my_profile(profile: ProfileUpdate, user=Depends(verify_token)):
     doc_ref = db.collection("users").document(user["uid"])
@@ -129,9 +143,10 @@ def update_my_profile(profile: ProfileUpdate, user=Depends(verify_token)):
     if not doc.exists:
         raise HTTPException(status_code=404, detail="User profile not found")
 
-    doc_ref.update({
-        "fullName": profile.fullName,
-        "contactNumber": profile.contactNumber,
-    })
+    doc_ref.update(
+        {
+            "fullName": profile.fullName,
+            "contactNumber": profile.contactNumber,
+        }
+    )
     return {"message": "Profile updated successfully"}
-
