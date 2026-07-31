@@ -1,0 +1,12 @@
+/* src/shared/css/logo.css */
+
+.logo {
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  .logo:hover,
+  .logo:visited,
+  .logo:active {
+    text-decoration: none;
+  }

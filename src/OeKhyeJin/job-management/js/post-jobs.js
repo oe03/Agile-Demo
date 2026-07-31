@@ -12,7 +12,7 @@ const editingJobId = urlParams.get("jobId");
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
-    window.location.href = "login.html";
+    window.location.href = "../../LoTzeKhang/user-authentication/login.html";
     return;
   }
 
@@ -25,7 +25,8 @@ onAuthStateChanged(auth, async (user) => {
 
 document.getElementById("logoutBtn").addEventListener("click", async () => {
   await signOut(auth);
-  window.location.href = "login.html";
+  localStorage.clear();
+  window.location.href = "../../LoTzeKhang/user-authentication/login.html";
 });
 
 document.getElementById("salary").addEventListener("input", (e) => {
@@ -215,5 +216,12 @@ document.getElementById("postJobForm").addEventListener("submit", async (e) => {
     statusMsg.textContent = error.message;
     statusMsg.className = "status error";
     console.error("Post job error:", error);
+  }
+});
+
+window.addEventListener("pageshow", (event) => {
+  if (event.persisted) {
+    // Page was restored from bfcache — force a full reload to re-check auth state
+    window.location.reload();
   }
 });
