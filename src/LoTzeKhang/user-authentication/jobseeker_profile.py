@@ -5,9 +5,8 @@ from datetime import UTC, datetime
 
 import anyio
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
-from pydantic import BaseModel
-
 from firebase_setup import db, verify_token
+from pydantic import BaseModel
 
 router = APIRouter()
 

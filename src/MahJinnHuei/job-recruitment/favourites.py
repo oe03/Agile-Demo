@@ -2,9 +2,8 @@
 from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
-
 from firebase_setup import db, verify_token
+from pydantic import BaseModel
 
 router = APIRouter()
 

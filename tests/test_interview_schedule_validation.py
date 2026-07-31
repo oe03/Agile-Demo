@@ -8,7 +8,6 @@ sys.path.append(
 
 import pytest
 from fastapi.testclient import TestClient
-
 from firebase_setup import verify_token
 from main import app
 

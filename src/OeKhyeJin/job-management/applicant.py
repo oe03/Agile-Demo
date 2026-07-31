@@ -6,9 +6,8 @@ from datetime import UTC, datetime
 
 import anyio
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
-from pydantic import BaseModel
-
 from firebase_setup import db, verify_token
+from pydantic import BaseModel
 
 router = APIRouter()
 
@@ -24,8 +23,7 @@ def time_ago(created_at: datetime) -> str:
         created_at = created_at.replace(tzinfo=UTC)
     now = datetime.now(UTC)
     diff_seconds = int((now - created_at).total_seconds())
-    if diff_seconds < 0:
-        diff_seconds = 0
+    diff_seconds = max(diff_seconds, 0)
     if diff_seconds < 60:
         return f"{diff_seconds}s ago"
     diff_minutes = diff_seconds // 60
